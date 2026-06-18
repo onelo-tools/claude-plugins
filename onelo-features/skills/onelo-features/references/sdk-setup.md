@@ -46,8 +46,14 @@ and if it's behind (or absent), install/update from the ref in the table above.
 | Python | `pip show onelo` | `pip install -U "git+https://github.com/onelo-tools/onelo-python.git@staging"` |
 | Go | `go list -m github.com/onelo-tools/onelo-go` | `go get -u github.com/onelo-tools/onelo-go@staging` |
 
-If you can't confirm the version, update anyway — instrumenting against a stale
-SDK can insert calls the installed version doesn't have.
+**How to know the latest version** (SDKs aren't on a registry — read git tags):
+```bash
+git ls-remote --tags https://github.com/onelo-tools/onelo-js       # → highest v…-staging tag
+# same for onelo-swift / onelo-android / onelo-flutter / onelo-python / onelo-go
+```
+Take the highest `*-staging` tag, compare to installed. If you can't confirm the
+version, update anyway — instrumenting against a stale SDK can insert calls the
+installed version doesn't have.
 
 ## Initialize once at app startup
 

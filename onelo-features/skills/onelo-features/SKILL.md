@@ -7,7 +7,24 @@ allowed-tools: Bash Glob Grep Read Edit
 
 # onelo-features Instrumentation
 
-Instruments your codebase with the `onelo-features` SDK. Runs in 7 phases.
+Instruments your codebase with the `onelo-features` SDK in phases 0–6 — follow the
+checklist below in order.
+
+## Run checklist — copy into your FIRST reply and tick off IN ORDER
+
+Mandatory. Copy the list below into your reply and check items off as you go. Do
+NOT scan or instrument before Phase 0 is done.
+
+```
+- [ ] 0a · SDK installed? if not → install (references/sdk-setup.md)
+- [ ] 0b · Installed version vs LATEST tag — if behind OR unsure, UPDATE first
+- [ ] 1   · Detect platform(s)
+- [ ] 2   · Scan (destinations + triggers + capabilities)
+- [ ] 2.5 · Classify (atom filter)
+- [ ] 3   · Propose → 4 · WAIT for approval
+- [ ] 5   · Implement (+ 5b generate registry)
+- [ ] 6   · Report (+ wire SDK: references/sdk-setup.md)
+```
 
 ## Reference files
 
@@ -71,8 +88,10 @@ Before scanning or instrumenting:
    is NOT present, install it first — see
    [references/sdk-setup.md](references/sdk-setup.md) ("Install the SDK").
 2. **Is it current?** The snippets this skill inserts may use APIs added in newer
-   SDK versions. Show the installed version and update if it's behind — see
-   sdk-setup.md ("Keep the SDK current"). If you can't confirm, update to be safe.
+   SDK versions. **Find the latest:** `git ls-remote --tags https://github.com/onelo-tools/<repo>`
+   (e.g. `onelo-js`, `onelo-swift`, `onelo-python`) → highest `*-staging` tag;
+   compare to the installed version (see sdk-setup.md "Keep the SDK current").
+   If installed < latest **OR you can't tell → UPDATE first**.
 3. Only then proceed to Phase 1. Never instrument against an absent or stale SDK —
    you'd insert code the installed version can't run.
 

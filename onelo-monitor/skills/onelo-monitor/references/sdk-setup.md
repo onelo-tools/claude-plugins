@@ -28,6 +28,15 @@ instrumenting against a stale SDK can insert calls the installed version lacks.
 | Swift | grep `onelo-swift` in `Package.resolved` | Xcode → File → Packages → Update to Latest, or `swift package update` |
 | Python | `pip show onelo` | `pip install -U "git+https://github.com/onelo-tools/onelo-python.git@staging"` |
 
+**How to know the latest version:** the SDKs aren't on a package registry, so read
+the git tags directly:
+```bash
+git ls-remote --tags https://github.com/onelo-tools/onelo-python   # → highest v0.5.0aN-staging
+git ls-remote --tags https://github.com/onelo-tools/onelo-swift
+```
+Take the highest `*-staging` tag and compare to the installed version. If behind
+(or you can't determine it), update with the command above.
+
 **Minimum versions for APIs this skill inserts:**
 - Python `monitor.track()` (context manager / decorator) → **onelo-python ≥ 0.5.0a23**.
   Older installs lack it; update before instrumenting or the inserted code breaks.

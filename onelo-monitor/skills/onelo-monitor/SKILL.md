@@ -16,6 +16,22 @@ over-instrumenting creates noise (alert fatigue, write amplification, a dropped
 event buffer), which is worse than gaps. Add tracking where a question needs
 answering, not everywhere it's possible.
 
+## Run checklist — copy into your FIRST reply and tick off IN ORDER
+
+This is mandatory. Copy the list below into your reply and check items off as you
+go. Do NOT jump to detection or instrumentation before Phase 0 is done.
+
+```
+- [ ] 0a · SDK installed? (Swift `import OneloSwift` / Python `from onelo import monitor`) — if not, install (references/sdk-setup.md)
+- [ ] 0b · Installed version vs LATEST tag — if behind OR unsure, UPDATE before anything else
+- [ ] 1  · Detect language(s) + monitor.init + crash capture → report the map
+- [ ] 2  · Choose mode (audit / coverage scan / instrument)
+- [ ] 3/4 · Build proposal → WAIT for approval
+- [ ] 5  · Apply approved changes
+- [ ] 6  · Independent verify (subagent)
+- [ ] 7  · Report
+```
+
 ## Reference files (load ONLY the one(s) for the detected SDK)
 
 - Swift — iOS & macOS: [references/swift.md](references/swift.md)
@@ -140,8 +156,11 @@ Before auditing or instrumenting:
 2. **Is it current?** The snippets this skill inserts may use newer APIs.
    Notably, Python `monitor.track()` (context manager / decorator) needs
    **onelo-python ≥ 0.5.0a23** — older installs lack it, so the inserted code
-   would break. Show the installed version and update if behind (sdk-setup.md).
-   If unsure, update.
+   would break. **Find the latest:** `git ls-remote --tags https://github.com/onelo-tools/onelo-python`
+   (or `…/onelo-swift`) → highest `*-staging` tag (e.g. `v0.5.0a24-staging`).
+   Compare to the installed version (`pip show onelo` / grep `Package.resolved`).
+   If installed < latest **OR you can't tell → UPDATE now** (sdk-setup.md) before
+   proceeding. Do not instrument a stale SDK.
 3. Only then proceed. Never instrument against an absent or stale SDK — you'd
    insert code the installed version can't run.
 
