@@ -1,5 +1,12 @@
 # Flutter / Dart Patterns
 
+## Contents
+- Flutter-specific classification rules
+- Grep patterns
+- Symbol extraction
+- Insertion point
+- Snippets
+
 ## Flutter-specific classification rules
 
 Generic atom-suffix and atom-path filtering happens in SKILL.md Phase 2.5.

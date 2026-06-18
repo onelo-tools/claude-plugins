@@ -3,6 +3,18 @@
 Detection rules, grep patterns, insertion points, and snippet templates for
 Go backend projects (net/http, Gin, Echo, Fiber, Chi, gRPC).
 
+## Contents
+- Go-specific classification rules
+- Grep patterns
+- Symbol extraction
+- Insertion point
+- Snippets
+- Trigger detection
+- Codegen for `FeatureRegistry`
+- Project structure assumptions
+- Testing patterns
+- Common pitfalls / anti-patterns
+
 ## Go-specific classification rules
 
 Generic atom-suffix and atom-path filtering happens in SKILL.md Phase 2.5.

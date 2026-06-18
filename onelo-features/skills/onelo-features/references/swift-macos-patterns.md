@@ -1,5 +1,14 @@
 # Swift macOS Patterns
 
+## Contents
+- macOS-specific classification rules
+- Grep patterns (destinations)
+- Trigger detection patterns
+- Capability detection patterns
+- Symbol extraction
+- Insertion point
+- Snippets
+
 ## macOS-specific classification rules
 
 Generic atom-suffix and atom-path filtering happens in SKILL.md Phase 2.5.

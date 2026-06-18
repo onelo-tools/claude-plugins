@@ -3,6 +3,16 @@
 Detection rules, grep patterns, insertion points, and snippet templates for
 Python backend projects (FastAPI, Django, Flask, aiohttp).
 
+## Contents
+- Python-specific classification rules
+- Grep patterns
+- Symbol extraction
+- Insertion point
+- Snippets
+- Trigger detection
+- Codegen for `FEATURE_REGISTRY`
+- Project structure assumptions
+
 ## Python-specific classification rules
 
 Generic atom-suffix and atom-path filtering happens in SKILL.md Phase 2.5.

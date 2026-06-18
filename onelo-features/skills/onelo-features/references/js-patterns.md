@@ -1,5 +1,13 @@
 # JS / TS / React / Next.js Patterns
 
+## Contents
+- JS-specific classification rules
+- Detection (sub-language)
+- Grep patterns
+- Symbol extraction
+- Insertion point
+- Snippets
+
 ## JS-specific classification rules
 
 Generic atom-suffix and atom-path filtering happens in SKILL.md Phase 2.5.
