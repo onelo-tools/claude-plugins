@@ -18,14 +18,18 @@ How to install / keep current / wire the Onelo SDK. Read this in Phase 0 (instal
 Onelo SDKs ship with all modules — auth, features, paywall, monitor — in
 one package, so a single init covers everything you instrumented.
 
-| Stack | Install |
+**Every SDK installs from GitHub (`onelo-tools/*`) — NOT the npm registry or
+pub.dev.** Use the `staging` ref while testing; drop it (or use the default
+branch) for production.
+
+| Stack | Install (from GitHub) |
 |---|---|
-| JavaScript / TypeScript | `npm install @onelo/js` (staging: `npm install github:onelo-tools/onelo-js#staging`) |
-| Swift (iOS / macOS) | Swift Package — `https://github.com/onelo-tools/onelo-swift` |
-| Android (Kotlin) | JitPack — `com.github.onelo-tools:onelo-android` |
-| Flutter | pub.dev — `onelo` |
-| Python (FastAPI / Django / Flask / aiohttp) | `pip install git+https://github.com/onelo-tools/onelo-python.git` (staging: append `@staging`) |
-| Go (net/http / Gin / Echo / Fiber / Chi / gRPC) | `go get github.com/onelo-tools/onelo-go` (staging: `@staging`) |
+| JavaScript / TypeScript | `npm install github:onelo-tools/onelo-js` (staging: append `#staging`) |
+| Swift (iOS / macOS) | Xcode → Add Package Dependencies → `https://github.com/onelo-tools/onelo-swift` (branch `staging`) |
+| Android (Kotlin) | JitPack (builds from GitHub): in `settings.gradle` add `maven { url "https://jitpack.io" }`, then `implementation("com.github.onelo-tools:onelo-android:+")` |
+| Flutter | `pubspec.yaml` git dep: `onelo_flutter:` → `git: { url: https://github.com/onelo-tools/onelo-flutter, ref: staging }` |
+| Python (FastAPI / Django / Flask / aiohttp) | `pip install "git+https://github.com/onelo-tools/onelo-python.git@staging"` |
+| Go (net/http / Gin / Echo / Fiber / Chi / gRPC) | `go get github.com/onelo-tools/onelo-go@staging` |
 
 ## Keep the SDK current (version check)
 
@@ -35,10 +39,10 @@ and if it's behind (or absent), install/update from the ref in the table above.
 
 | Stack | Show installed version | Update to latest |
 |---|---|---|
-| JavaScript / TypeScript | `npm ls @onelo/js` | re-run the install (the github ref fetches newest), or `npm update @onelo/js` |
+| JavaScript / TypeScript | `npm ls @onelo/js` (shows resolved github commit) | re-run `npm install github:onelo-tools/onelo-js#staging` (the github ref fetches newest) |
 | Swift (iOS / macOS) | grep `onelo-swift` in `Package.resolved` | Xcode → File → Packages → Update to Latest, or `swift package update` |
-| Kotlin (Android) | the version in `build.gradle(.kts)` | bump the JitPack coordinate to the latest tag |
-| Flutter | `flutter pub deps \| grep onelo` (or `pubspec.lock`) | `flutter pub upgrade onelo` |
+| Kotlin (Android) | the version in `build.gradle(.kts)` | bump the JitPack coordinate (`com.github.onelo-tools:onelo-android`) to the latest tag |
+| Flutter | `flutter pub deps \| grep onelo_flutter` (or `pubspec.lock`) | `flutter pub upgrade onelo_flutter` |
 | Python | `pip show onelo` | `pip install -U "git+https://github.com/onelo-tools/onelo-python.git@staging"` |
 | Go | `go list -m github.com/onelo-tools/onelo-go` | `go get -u github.com/onelo-tools/onelo-go@staging` |
 
@@ -125,7 +129,7 @@ or expose through Hilt/Koin if you use DI.
 ### Flutter (`main.dart`)
 ```dart
 import 'package:flutter/foundation.dart';
-import 'package:onelo/onelo.dart';
+import 'package:onelo_flutter/onelo_flutter.dart';
 import 'generated/feature_registry.dart';
 
 final onelo = Onelo(

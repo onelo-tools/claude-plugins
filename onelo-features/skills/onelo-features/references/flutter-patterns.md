@@ -119,7 +119,7 @@ you toggle them in the dashboard:
 
 ```dart
 import 'package:flutter/foundation.dart';
-import 'package:onelo/onelo.dart';
+import 'package:onelo_flutter/onelo_flutter.dart';
 
 final onelo = Onelo(
   publishableKey: 'pk_live_...',
@@ -309,7 +309,7 @@ projects in 2026. Expose Onelo as a `Provider` and read it via `ref`:
 // providers/onelo.dart
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:onelo/onelo.dart';
+import 'package:onelo_flutter/onelo_flutter.dart';
 
 final oneloProvider = Provider<Onelo>((ref) {
   final onelo = Onelo(
