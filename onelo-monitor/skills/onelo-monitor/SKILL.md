@@ -20,6 +20,7 @@ answering, not everywhere it's possible.
 
 - Swift — iOS & macOS: [references/swift.md](references/swift.md)
 - Python — backends: [references/python.md](references/python.md)
+- SDK install / version / init (Swift & Python): [references/sdk-setup.md](references/sdk-setup.md)
 
 JS (`@onelo/js`), Electron, React Native, Kotlin, Flutter and Go are **not
 covered yet** — their Monitor surface may be outdated. If the only SDK present is
@@ -126,6 +127,27 @@ every thread. Two different bars:
 
 Comprehensive on failures, selective on successes — that combination is what makes
 the dashboard trustworthy: green means green, and nothing fails in silence.
+
+---
+
+## Phase 0 — Ensure the SDK is present & current (always first)
+
+Before auditing or instrumenting:
+
+1. **Is the SDK installed?** (Swift: `import OneloSwift` + `Onelo(...)`; Python:
+   `from onelo import ... monitor`.) If NOT present, install it first —
+   [references/sdk-setup.md](references/sdk-setup.md).
+2. **Is it current?** The snippets this skill inserts may use newer APIs.
+   Notably, Python `monitor.track()` (context manager / decorator) needs
+   **onelo-python ≥ 0.5.0a23** — older installs lack it, so the inserted code
+   would break. Show the installed version and update if behind (sdk-setup.md).
+   If unsure, update.
+3. Only then proceed. Never instrument against an absent or stale SDK — you'd
+   insert code the installed version can't run.
+
+> Note: "installed & current" (Phase 0) is separate from "Monitor initialised"
+> (Phase 1). The SDK can be present for auth yet have no `monitor.init()` — that's
+> a Phase 1 gap, fixed via sdk-setup.md's init section.
 
 ---
 

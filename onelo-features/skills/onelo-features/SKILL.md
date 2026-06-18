@@ -63,6 +63,21 @@ is gated separately with `isVisible`.
 
 ---
 
+## Phase 0 — Ensure the SDK is present & current (always first)
+
+Before scanning or instrumenting:
+
+1. **Is the SDK installed?** Detect it per the language signals in Phase 1. If it
+   is NOT present, install it first — see
+   [references/sdk-setup.md](references/sdk-setup.md) ("Install the SDK").
+2. **Is it current?** The snippets this skill inserts may use APIs added in newer
+   SDK versions. Show the installed version and update if it's behind — see
+   sdk-setup.md ("Keep the SDK current"). If you can't confirm, update to be safe.
+3. Only then proceed to Phase 1. Never instrument against an absent or stale SDK —
+   you'd insert code the installed version can't run.
+
+---
+
 ## Phase 1 — Detect platforms
 
 Check for these files in the project root (use Bash `ls` or Glob):

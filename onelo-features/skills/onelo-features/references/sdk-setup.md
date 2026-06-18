@@ -1,10 +1,11 @@
 # SDK setup (post-instrumentation)
 
-How to wire the Onelo SDK after the skill has inserted `feature(...)` calls.
-Read this in Phase 6 once instrumentation is done.
+How to install / keep current / wire the Onelo SDK. Read this in Phase 0 (install
++ version check) and Phase 6 (init + setup, once instrumentation is done).
 
 ## Contents
 - Install the SDK
+- Keep the SDK current (version check)
 - Initialize once at app startup (per-language init)
 - Declare known features upfront
 - Keeping the registry in sync (build hook)
@@ -25,6 +26,24 @@ one package, so a single init covers everything you instrumented.
 | Flutter | pub.dev — `onelo` |
 | Python (FastAPI / Django / Flask / aiohttp) | `pip install git+https://github.com/onelo-tools/onelo-python.git` (staging: append `@staging`) |
 | Go (net/http / Gin / Echo / Fiber / Chi / gRPC) | `go get github.com/onelo-tools/onelo-go` (staging: `@staging`) |
+
+## Keep the SDK current (version check)
+
+Before instrumenting, make sure the installed SDK is recent — the snippets this
+skill inserts may use APIs added in newer versions. Show the installed version,
+and if it's behind (or absent), install/update from the ref in the table above.
+
+| Stack | Show installed version | Update to latest |
+|---|---|---|
+| JavaScript / TypeScript | `npm ls @onelo/js` | re-run the install (the github ref fetches newest), or `npm update @onelo/js` |
+| Swift (iOS / macOS) | grep `onelo-swift` in `Package.resolved` | Xcode → File → Packages → Update to Latest, or `swift package update` |
+| Kotlin (Android) | the version in `build.gradle(.kts)` | bump the JitPack coordinate to the latest tag |
+| Flutter | `flutter pub deps \| grep onelo` (or `pubspec.lock`) | `flutter pub upgrade onelo` |
+| Python | `pip show onelo` | `pip install -U "git+https://github.com/onelo-tools/onelo-python.git@staging"` |
+| Go | `go list -m github.com/onelo-tools/onelo-go` | `go get -u github.com/onelo-tools/onelo-go@staging` |
+
+If you can't confirm the version, update anyway — instrumenting against a stale
+SDK can insert calls the installed version doesn't have.
 
 ## Initialize once at app startup
 
