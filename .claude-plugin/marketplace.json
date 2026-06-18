@@ -1,0 +1,18 @@
+{
+  "name": "onelo-tools",
+  "owner": {
+    "name": "onelo-tools"
+  },
+  "plugins": [
+    {
+      "name": "onelo-features",
+      "source": "./onelo-features",
+      "description": "Scans your codebase and inserts onelo-features SDK calls automatically. Staging channel — auto-updates on every commit (cache key = git SHA)."
+    },
+    {
+      "name": "onelo-monitor",
+      "source": "./onelo-monitor",
+      "description": "Audits and instruments Onelo Monitor SDK usage (Swift, Python). Staging channel — auto-updates on every commit (cache key = git SHA)."
+    }
+  ]
+}

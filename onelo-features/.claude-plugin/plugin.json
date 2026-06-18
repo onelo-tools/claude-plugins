@@ -1,0 +1,10 @@
+{
+  "name": "onelo-features",
+  "description": "Onelo Features instrumentation plugin for Claude Code. Scans your codebase and inserts onelo-features SDK calls automatically.",
+  "author": {
+    "name": "onelo-tools"
+  },
+  "homepage": "https://onelo.tools",
+  "repository": "https://github.com/onelo-tools/claude-plugins",
+  "license": "MIT"
+}
