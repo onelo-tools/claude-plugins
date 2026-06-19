@@ -18,6 +18,7 @@ NOT scan or instrument before Phase 0 is done.
 ```
 - [ ] 0a · SDK installed? if not → install (references/sdk-setup.md)
 - [ ] 0b · Installed version vs LATEST tag — if behind OR unsure, UPDATE first
+- [ ] 0c · Smoke-test: project still builds/imports after install/update (native build/import cmd)
 - [ ] 1   · Detect platform(s)
 - [ ] 2   · Scan (destinations + triggers + capabilities)
 - [ ] 2.5 · Classify (atom filter)
@@ -92,8 +93,16 @@ Before scanning or instrumenting:
    (e.g. `onelo-js`, `onelo-swift`, `onelo-python`) → highest `*-staging` tag;
    compare to the installed version (see sdk-setup.md "Keep the SDK current").
    If installed < latest **OR you can't tell → UPDATE first**.
-3. Only then proceed to Phase 1. Never instrument against an absent or stale SDK —
-   you'd insert code the installed version can't run.
+3. **Smoke-test after ANY install/update.** An SDK upgrade can REMOVE or tighten
+   things existing code relies on (not just add APIs) — that's how a removed
+   `discovery_key` / blank `feature_environment` upgrade crash-loops a backend.
+   Verify the project still builds/imports BEFORE instrumenting, with its native
+   command: JS/TS `npm run build` (or `tsc --noEmit`); Swift `swift build`; Kotlin
+   `./gradlew assemble`; Flutter `flutter analyze`; Python import the entry
+   (`python -c "import main"`); Go `go build ./...`. If it FAILS, the update broke
+   EXISTING code → fix that first; do not instrument.
+4. Only then proceed to Phase 1. Never instrument against an absent, stale, or
+   non-building SDK — you'd insert code the installed version can't run.
 
 ---
 

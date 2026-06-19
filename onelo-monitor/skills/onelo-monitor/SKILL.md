@@ -24,6 +24,7 @@ go. Do NOT jump to detection or instrumentation before Phase 0 is done.
 ```
 - [ ] 0a · SDK installed? (Swift `import OneloSwift` / Python `from onelo import monitor`) — if not, install (references/sdk-setup.md)
 - [ ] 0b · Installed version vs LATEST tag — if behind OR unsure, UPDATE before anything else
+- [ ] 0c · Smoke-test: app still builds/imports after install/update (swift build / python -c "import <entry>")
 - [ ] 1  · Detect language(s) + monitor.init + crash capture → report the map
 - [ ] 2  · Choose mode (audit / coverage scan / instrument)
 - [ ] 3/4 · Build proposal → WAIT for approval
@@ -161,8 +162,15 @@ Before auditing or instrumenting:
    Compare to the installed version (`pip show onelo` / grep `Package.resolved`).
    If installed < latest **OR you can't tell → UPDATE now** (sdk-setup.md) before
    proceeding. Do not instrument a stale SDK.
-3. Only then proceed. Never instrument against an absent or stale SDK — you'd
-   insert code the installed version can't run.
+3. **Smoke-test after ANY install/update.** An SDK upgrade can REMOVE or tighten
+   things existing code relies on (not just add APIs) — that's exactly how a
+   removed `discovery_key` and a blank `feature_environment` crash-looped Turingo's
+   backend. Verify the app still builds/imports BEFORE instrumenting:
+   - Swift: `swift build` (or an Xcode build) must succeed.
+   - Python: import the app entry, e.g. `python -c "import main"` (your FastAPI
+     `module:app`) must not raise.
+   If it FAILS, the update broke EXISTING code → fix that first; do not instrument.
+4. Only then proceed. Never instrument against an absent, stale, or non-starting SDK.
 
 > Note: "installed & current" (Phase 0) is separate from "Monitor initialised"
 > (Phase 1). The SDK can be present for auth yet have no `monitor.init()` — that's
