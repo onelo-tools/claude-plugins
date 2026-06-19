@@ -1,6 +1,6 @@
 ---
 name: onelo-monitor
-description: Audits and instruments Onelo Monitor SDK usage (error and performance tracking). Use when a developer adds Onelo Monitor to an app, or wants existing monitor instrumentation reviewed for anti-patterns — error-only features that never auto-resolve, failure-mode event names, event() calls that should be track(), or missing facet meta. Currently covers Swift (iOS/macOS) and Python; other SDKs are deferred.
+description: Audits and instruments Onelo Monitor SDK usage (error and performance tracking). Use when a developer adds Onelo Monitor to an app, or wants existing monitor instrumentation reviewed for anti-patterns — error-only features that don't auto-resolve, failure-mode event names, event() calls that should be track(), or missing facet meta. Currently covers Swift (iOS/macOS) and Python; other SDKs are deferred.
 disable-model-invocation: true
 allowed-tools: Bash Glob Grep Read Edit Task
 ---
@@ -55,10 +55,14 @@ event carries a `featureName`, `ok` (true/false), a `source` (event / track /
 
 Two facts drive every audit rule below:
 
-1. **Recovery needs success traffic.** An incident auto-resolves only when the
-   error rate falls — which requires `ok:true` events. A feature that emits ONLY
-   `ok:false` can never auto-resolve; its incident stays open forever. This is
-   the #1 cause of stale incidents.
+1. **Recovery needs success traffic.** Auto-resolve fires only when the error
+   rate FALLS below threshold while events are still arriving (`check_alerts`
+   skips a feature with no events in the window). A feature that emits ONLY
+   `ok:false` never produces the `ok:true` events that would lower the rate —
+   and once the error stops it goes silent, so the auto-resolve check never runs.
+   Such an incident **won't clear itself**; it has to be resolved manually
+   (reopen-on-regression makes closing it safe). This is the #1 cause of stale
+   incidents.
 2. **The name is permanent UI.** The `featureName` shows in Feature Health on
    success AND failure. A name describing the failure (`backend_error`) reads as
    a standing alarm even when everything is healthy.
@@ -74,8 +78,9 @@ file. Apply in order; severity A → G.
 ### Rule A — Error-only feature ⛔ (highest priority)
 **Signal:** every call site for the feature passes `ok:false` (or it is a
 `capture`/global-error-only feature).
-**Why:** error rate is pinned at 100% → the incident can NEVER auto-resolve → it
-piles up open indefinitely.
+**Why:** error rate is pinned at 100% and the feature goes silent once the error
+stops → the auto-resolve check never fires → the incident won't clear itself and
+must be resolved manually (so these pile up open).
 **Fix:** emit the success path too — turn the error-only marker into a `track()`
 that wraps the real operation, so the SAME feature reports both ok and error. If
 a success path genuinely cannot exist (e.g. a pure crash signal), flag it
@@ -226,7 +231,7 @@ Proposal table template:
 ```
 Audit — {N} features, {M} findings (most severe first)
 
-⛔ ERROR-ONLY · can never auto-resolve ({k})
+⛔ ERROR-ONLY · won't auto-resolve, needs manual ({k})
   #1  backend_error          Backend.swift:88   only ok:false   → make track() / resolve-manually
 ⚠ FAILURE-MODE NAME ({k})
   #2  customer_portal_open_failed  Portal.swift:33   → customer_portal_open (ok:false)
