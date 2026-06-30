@@ -67,10 +67,20 @@ struct MyApp: App {
 Call `monitor.init()` ONCE at startup, before any request handler. Wire the
 framework integration + `install_excepthook=True` for global crash capture
 (covers uncaught errors across threads + the asyncio loop).
+
+**Credential — Python is a BACKEND SDK, so it authenticates with the SERVER
+SECRET key (`onelo_sk_live_*`), NOT a publishable key.** A publishable key is a
+public app *identifier* for client apps (protected by Origin / attestation /
+client_secret); a backend is a trusted server and uses the secret key. Create it
+in the Onelo dashboard → API Keys → Secret keys and read it from the environment
+(`ONELO_SECRET_KEY`) — never hard-code a secret in source. (Functionally the
+ingest endpoint accepts either key by prefix, but the secret key is the correct
+server-side credential.)
 ```python
+import os
 from onelo import Onelo, monitor
 
-onelo = Onelo(publishable_key="{{publishableKey}}", api_url="{{apiUrl}}")
+onelo = Onelo(secret_key=os.environ["ONELO_SECRET_KEY"], api_url="{{apiUrl}}")
 monitor.init(onelo=onelo, environment="production", install_excepthook=True)
 
 # FastAPI / Starlette / Litestar (ASGI):
