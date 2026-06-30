@@ -81,7 +81,10 @@ import os
 from onelo import Onelo, monitor
 
 onelo = Onelo(secret_key=os.environ["ONELO_SECRET_KEY"], api_url="{{apiUrl}}")
-monitor.init(onelo=onelo, environment="production", install_excepthook=True)
+# Monitor is a single event stream — no test/live split (that's a Features-only
+# concept). `environment` is just an OPTIONAL free-form deploy label/tag; omit it
+# and the SDK reads ONELO_ENVIRONMENT / ENVIRONMENT only if you set them.
+monitor.init(onelo=onelo, install_excepthook=True)
 
 # FastAPI / Starlette / Litestar (ASGI):
 from onelo.monitor.integrations import OneloMonitorASGIMiddleware
