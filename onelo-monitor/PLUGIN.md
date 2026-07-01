@@ -32,7 +32,8 @@ does NOT mass-wrap code. It has two jobs:
 |---|---|---|
 | Swift (iOS / macOS) | `onelo-swift` (SwiftPM) | ✅ supported |
 | Python (FastAPI / Django / Flask / …) | `onelo-python` | ✅ supported |
-| JS / Electron / React Native / Kotlin / Flutter / Go | — | ⏳ deferred (surface may be outdated) |
+| JavaScript / TypeScript (web & SSR/Node) | `@onelo/js` | ✅ supported |
+| Electron / React Native / Kotlin / Flutter / Go | — | ⏳ deferred (surface may be outdated) |
 
 ## Skills included
 

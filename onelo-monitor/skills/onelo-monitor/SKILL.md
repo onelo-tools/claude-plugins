@@ -1,6 +1,6 @@
 ---
 name: onelo-monitor
-description: Audits and instruments Onelo Monitor SDK usage (error and performance tracking). Use when a developer adds Onelo Monitor to an app, or wants existing monitor instrumentation reviewed for anti-patterns — error-only features that don't auto-resolve, failure-mode event names, event() calls that should be track(), or missing facet meta. Currently covers Swift (iOS/macOS) and Python; other SDKs are deferred.
+description: Audits and instruments Onelo Monitor SDK usage (error and performance tracking). Use when a developer adds Onelo Monitor to an app, or wants existing monitor instrumentation reviewed for anti-patterns — error-only features that don't auto-resolve, failure-mode event names, event() calls that should be track(), or missing facet meta. Currently covers Swift (iOS/macOS), Python (backends), and JavaScript/TypeScript (web & SSR/Node); other SDKs are deferred.
 disable-model-invocation: true
 allowed-tools: Bash Glob Grep Read Edit Task
 ---
@@ -22,7 +22,7 @@ This is mandatory. Copy the list below into your reply and check items off as yo
 go. Do NOT jump to detection or instrumentation before Phase 0 is done.
 
 ```
-- [ ] 0a · SDK installed? (Swift `import OneloSwift` / Python `from onelo import monitor`) — if not, install (references/sdk-setup.md)
+- [ ] 0a · SDK installed? (Swift `import OneloSwift` / Python `from onelo import monitor` / JS `import { Onelo } from '@onelo/js'`) — if not, install (references/sdk-setup.md)
 - [ ] 0b · Installed version vs LATEST tag — if behind OR unsure, UPDATE before anything else
 - [ ] 0c · Smoke-test: app still builds/imports after install/update (swift build / python -c "import <entry>")
 - [ ] 1  · Detect language(s) + monitor.init + crash capture → report the map
@@ -37,12 +37,12 @@ go. Do NOT jump to detection or instrumentation before Phase 0 is done.
 
 - Swift — iOS & macOS: [references/swift.md](references/swift.md)
 - Python — backends: [references/python.md](references/python.md)
-- SDK install / version / init (Swift & Python): [references/sdk-setup.md](references/sdk-setup.md)
+- JavaScript / TypeScript — web & SSR/Node (`@onelo/js`): [references/js.md](references/js.md)
+- SDK install / version / init (Swift, Python & JS): [references/sdk-setup.md](references/sdk-setup.md)
 
-JS (`@onelo/js`), Electron, React Native, Kotlin, Flutter and Go are **not
-covered yet** — their Monitor surface may be outdated. If the only SDK present is
-one of those, say so and stop (see "Unsupported SDKs"). Never guess their API
-from another language.
+Electron, React Native, Kotlin, Flutter and Go are **not covered yet** — their
+Monitor surface may be outdated. If the only SDK present is one of those, say so
+and stop (see "Unsupported SDKs"). Never guess their API from another language.
 
 ---
 
@@ -157,7 +157,8 @@ the dashboard trustworthy: green means green, and nothing fails in silence.
 Before auditing or instrumenting:
 
 1. **Is the SDK installed?** (Swift: `import OneloSwift` + `Onelo(...)`; Python:
-   `from onelo import ... monitor`.) If NOT present, install it first —
+   `from onelo import ... monitor`; JS: `import { Onelo } from '@onelo/js'` +
+   `new Onelo(...)`.) If NOT present, install it first —
    [references/sdk-setup.md](references/sdk-setup.md).
 2. **Is it current?** The snippets this skill inserts may use newer APIs.
    Notably, Python `monitor.track()` (context manager / decorator) needs
@@ -352,7 +353,8 @@ persistence / background work with no user-facing outcome; PII in meta.
 
 ## Unsupported SDKs (deferred)
 
-JavaScript (`@onelo/js`), Electron, React Native, Kotlin, Flutter and Go are not
-covered in this version — their Monitor surface may be outdated. If one of those
-is the only SDK present, tell the developer it isn't supported yet and stop. Do
-not guess the API from Swift or Python.
+Electron, React Native, Kotlin, Flutter and Go are not covered in this version —
+their Monitor surface may be outdated. If one of those is the only SDK present,
+tell the developer it isn't supported yet and stop. Do not guess the API from
+Swift, Python or JS. (Swift, Python and JavaScript/TypeScript ARE supported — see
+the reference files above.)

@@ -1,13 +1,14 @@
-# SDK setup — install, version, init (Swift & Python)
+# SDK setup — install, version, init (Swift, Python & JS)
 
 Install / update the Onelo SDK and initialise Monitor. Read this in Phase 0
-(present & current) and Phase 5 (init), for the two SDKs this skill supports.
+(present & current) and Phase 5 (init), for the SDKs this skill supports.
 
 ## Contents
 - Install the SDK
 - Keep the SDK current (version check)
 - Initialize Monitor — Swift
 - Initialize Monitor — Python
+- Initialize Monitor — JavaScript / TypeScript
 
 ## Install the SDK
 The Onelo SDK ships all modules (auth, features, paywall, monitor) in ONE package,
@@ -18,6 +19,7 @@ initialising (see below).
 |---|---|
 | Swift (iOS / macOS) | Swift Package — `https://github.com/onelo-tools/onelo-swift` (branch: `staging`) |
 | Python (FastAPI / Django / Flask / Litestar) | `pip install "git+https://github.com/onelo-tools/onelo-python.git@staging"` — extras: `onelo[fastapi]` / `[django]` / `[flask]` / `[litestar]` |
+| JS / TS (vanilla / React / Vue / Next.js / Node) | `npm install github:onelo-tools/onelo-js#staging` (prod: drop `#staging`). Package `@onelo/js`. |
 
 ## Keep the SDK current (version check)
 The snippets this skill inserts may use APIs added in newer versions —
@@ -27,6 +29,7 @@ instrumenting against a stale SDK can insert calls the installed version lacks.
 |---|---|---|
 | Swift | grep `onelo-swift` in `Package.resolved` | Xcode → File → Packages → Update to Latest, or `swift package update` |
 | Python | `pip show onelo` | `pip install -U "git+https://github.com/onelo-tools/onelo-python.git@staging"` |
+| JS | `npm ls @onelo/js` / `version` in `node_modules/@onelo/js/package.json` | `npm install github:onelo-tools/onelo-js#staging` again (re-pulls the branch HEAD) |
 
 **How to know the latest version:** the SDKs aren't on a package registry, so read
 the git tags directly:
@@ -92,3 +95,33 @@ app.add_middleware(OneloMonitorASGIMiddleware)
 # Django:  add "onelo.monitor.integrations.django.OneloMonitorMiddleware" to MIDDLEWARE
 # Flask:   from onelo.monitor.integrations.flask import install; install(app)
 ```
+
+## Initialize Monitor — JavaScript / TypeScript
+Create ONE `Onelo` instance at module level (never inside a component / hook /
+request handler — re-creating loses the buffer + resets the session id). For SSR
+(Next.js / Remix) create it once at server startup, not per request.
+
+**Credential — JS is a CLIENT SDK, so it uses the PUBLISHABLE key
+(`onelo_pk_live_*`).** Unlike the Python backend SDK (secret key), a publishable
+key is a public app identifier — safe to ship in a browser bundle because it's
+protected by Origin / attestation / client_secret, and it can't do privileged
+operations. (Even in a Next.js app the publishable key is the right one — it ends
+up in the client bundle, which is fine.)
+```ts
+import { Onelo } from '@onelo/js'
+
+export const onelo = new Onelo({
+  publishableKey: '{{publishableKey}}',   // onelo_pk_live_* — public app identifier
+  apiUrl: '{{apiUrl}}',
+  // Optional → surface as Release / App build / Environment columns:
+  // appVersion: '1.2.0', appBuild: '420', environment: 'production',
+})
+// Crash capture: AUTOMATIC in the browser (window 'error' + 'unhandledrejection').
+// SSR / Node: there is NO global handler — track() server operations explicitly,
+//   or forward process.on('uncaughtException'/'unhandledRejection') into
+//   onelo.monitor.event('unhandled', { ok: false, error: String(e) }).
+// Teardown: onelo.monitor.destroy() on graceful Node shutdown; an SPA needs none.
+```
+`onelo.monitor` exposes `track(name, fn, {meta})`, `event(name, {ok,error,meta})`,
+`setUserId(id|null)`, `flush()`, `destroy()`. There is **no `capture()`** — record
+a caught error with `event({ ok: false, error })`. See [js.md](js.md).
