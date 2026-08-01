@@ -33,13 +33,30 @@ go. Do NOT jump to detection or instrumentation before Phase 0 is done.
 - [ ] 7  · Report
 ```
 
+## Snippets — the code that gets inserted
+
+One file per platform. Open ONLY the one you detected.
+
+<!-- snippet-index:start -->
+| Platform | Snippet file |
+|---|---|
+| Android — Kotlin | [`references/snippets/android.md`](references/snippets/android.md) |
+| Electron | [`references/snippets/electron.md`](references/snippets/electron.md) |
+| Flutter — Dart | [`references/snippets/flutter.md`](references/snippets/flutter.md) |
+| JavaScript / TypeScript | [`references/snippets/javascript.md`](references/snippets/javascript.md) |
+| React Native | [`references/snippets/react-native.md`](references/snippets/react-native.md) |
+| Swift — iOS | [`references/snippets/swift-ios.md`](references/snippets/swift-ios.md) |
+| Node.js — backend | [`references/snippets/node.md`](references/snippets/node.md) |
+| PHP — backend | [`references/snippets/php.md`](references/snippets/php.md) |
+| Python — backend | [`references/snippets/python.md`](references/snippets/python.md) |
+<!-- snippet-index:end -->
+
 ## Reference files (load ONLY the one(s) for the detected SDK)
 
 - Swift — iOS & macOS: [references/swift.md](references/swift.md)
 - Python — backends: [references/python.md](references/python.md)
 - JavaScript / TypeScript — web & SSR/Node (`@onelo/js`): [references/js.md](references/js.md)
 - SDK install / version / init (Swift, Python & JS): [references/sdk-setup.md](references/sdk-setup.md)
-- **Snippets (the code that gets inserted, all platforms): [references/snippets.md](references/snippets.md)**
 
 Electron, React Native, Kotlin and Flutter are **not covered yet** — their
 Monitor surface may be outdated. If the only SDK present is one of those, say so
@@ -286,7 +303,7 @@ For each approved item (an audit fix, a coverage item, or a single named op):
    event; already-caught error → capture). Derive a snake_case name (Rule G) +
    facet meta (Rule D).
 2. Take the canonical snippet from
-   [references/snippets.md](references/snippets.md) — do NOT improvise SDK calls
+   the snippet file for this platform (table at the top of this skill) — do NOT improvise SDK calls
    and do NOT adapt another language's snippet. That file ships inside this
    plugin, baked from `@onelo/snippets` at publish time, so it is exactly what
    the dashboard and /docs show. No network call needed.

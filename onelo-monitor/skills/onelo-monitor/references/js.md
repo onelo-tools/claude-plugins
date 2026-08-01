@@ -10,7 +10,7 @@ language-agnostic audit rules (A–G) live in SKILL.md.
 - Coverage scan patterns
 - Insertion rules
 - Browser vs SSR/Node (the platform sub-split — crash capture differs!)
-- Snippet fetch + fallback
+- Snippet source (baked in this plugin)
 - Good vs bad examples
 
 ## Detect signals
@@ -136,7 +136,8 @@ every 15s, immediate flush on `ok:false`.
 
 ## Snippet source (Phase 4)
 
-The exact API shape lives in [snippets.md](snippets.md), baked into this plugin
+The exact API shape lives in the snippet file for this platform — see the
+platform table in SKILL.md. It is baked into this plugin
 from `@onelo/snippets` at publish time. Take `install` / `init` / `usage` from
 there and replace the feature name.
 

@@ -8,9 +8,10 @@ language-agnostic audit rules (A–G) live in SKILL.md.
 - Primitives (track / capture_exception / capture_message / capture_event)
 - Auto-instrumentation (integrations — prefer these)
 - Grep patterns
+- Coverage scan patterns
 - Insertion rules
 - Crash capture (excepthook)
-- Snippet fetch + fallback
+- Snippet source (baked in this plugin)
 - Good vs bad examples
 
 ## Detect signals
@@ -117,7 +118,8 @@ wiring needed.
 
 ## Snippet source (Phase 4)
 
-The exact API shape lives in [snippets.md](snippets.md), baked into this plugin
+The exact API shape lives in the snippet file for this platform — see the
+platform table in SKILL.md. It is baked into this plugin
 from `@onelo/snippets` at publish time. Take `install` / `init` / `usage` from
 there and replace the feature name.
 

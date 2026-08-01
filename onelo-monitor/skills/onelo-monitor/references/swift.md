@@ -7,9 +7,10 @@ language-agnostic audit rules (A–G) live in SKILL.md.
 - Detect signals
 - Primitives (track / event / capture) and when to use each
 - Grep patterns (call sites, feature names, init)
+- Coverage scan patterns
 - Insertion rules
 - iOS vs macOS (flush lifecycle + crash capture — the only platform sub-split)
-- Snippet fetch + fallback
+- Snippet source (baked in this plugin)
 - Good vs bad examples
 
 ## Detect signals
@@ -101,7 +102,8 @@ event payload are identical. Two things differ:
 
 ## Snippet source (Phase 4)
 
-The exact API shape lives in [snippets.md](snippets.md), baked into this plugin
+The exact API shape lives in the snippet file for this platform — see the
+platform table in SKILL.md. It is baked into this plugin
 from `@onelo/snippets` at publish time. Take `install` / `init` / `usage` from
 there and replace the feature name.
 

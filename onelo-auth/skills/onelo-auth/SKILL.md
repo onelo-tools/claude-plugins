@@ -122,10 +122,26 @@ The integration code ships **inside this plugin**, baked from `@onelo/snippets`
 at publish time — the same source the dashboard **SDK** tab and **/docs** render
 from. No network call, no API key, nothing to fetch.
 
-- Client platforms → [references/snippets-client.md](references/snippets-client.md)
-- Backend verification → [references/snippets-backend.md](references/snippets-backend.md)
+Open ONLY the file for the platform you detected in Phase 1 — one file per
+platform, so the rest costs you nothing.
 
-Open only the section for the platform you detected in Phase 1.
+<!-- snippet-index:start -->
+| Platform | Snippet file |
+|---|---|
+| Android — Kotlin | [`references/snippets/android.md`](references/snippets/android.md) |
+| Electron | [`references/snippets/electron.md`](references/snippets/electron.md) |
+| Flutter — Dart | [`references/snippets/flutter.md`](references/snippets/flutter.md) |
+| React Native | [`references/snippets/react-native.md`](references/snippets/react-native.md) |
+| Swift — iOS and macOS | [`references/snippets/swift.md`](references/snippets/swift.md) |
+| Web — JavaScript / TypeScript | [`references/snippets/web.md`](references/snippets/web.md) |
+| Node.js — backend | [`references/snippets/node.md`](references/snippets/node.md) |
+| PHP — backend | [`references/snippets/php.md`](references/snippets/php.md) |
+| Python — backend | [`references/snippets/python.md`](references/snippets/python.md) |
+<!-- snippet-index:end -->
+
+Frontend and backend are different jobs: the client file signs the user in, the
+backend file verifies the token on your own API. An app with a backend usually
+needs both — ask which they want.
 
 **Never author an Onelo SDK call yourself**, and never adapt one language's
 snippet into another. If a platform has no section here, it has no supported
