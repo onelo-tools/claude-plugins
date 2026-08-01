@@ -115,15 +115,15 @@ excepthook — wrap its body in `track()` for a named feature.
 `threading.excepthook`, and the asyncio loop exception handler — no per-handler
 wiring needed.
 
-## Snippet fetch (Phase 4)
-```bash
-curl -sf "${ONELO_API_BASE:-https://app.onelo.tools}/api/snippets?sdk=monitor&lang=python"
-```
-Use the `usage` / `init` fields. Fallback if the fetch fails:
-```python
-with monitor.track("pdf_export", meta={"pages": doc.pages}):
-    render_and_upload(doc)
-```
+## Snippet source (Phase 4)
+
+The exact API shape lives in [snippets.md](snippets.md), baked into this plugin
+from `@onelo/snippets` at publish time. Take `install` / `init` / `usage` from
+there and replace the feature name.
+
+Never write the call from memory and never adapt another language's snippet —
+the "Good vs bad" examples below are for judging NAMES and PRIMITIVES, not for
+copying syntax.
 
 ## Good vs bad (examples pattern)
 - `start = time(); …; capture_event(MonitorEvent(ok=True, duration_ms=…))` → `with monitor.track("op"):`  *(Rule C)*

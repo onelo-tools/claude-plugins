@@ -134,22 +134,15 @@ emitting feature `unhandled`, `ok=false`).
 `setUserId()` / Onelo Auth), `sessionId`, `platform: 'js'`. Buffer cap 200, flush
 every 15s, immediate flush on `ok:false`.
 
-## Snippet fetch (Phase 4)
-```bash
-curl -sf "${ONELO_API_BASE:-https://app.onelo.tools}/api/snippets?sdk=monitor&lang=js"
-```
-Use the `usage` field and replace the feature name. Fallback if the fetch fails:
-```ts
-// operation (async)
-const data = await onelo.monitor.track('pdf_upload', () => upload(file), { meta: { size: file.size } })
-// instantaneous
-onelo.monitor.event('tab_viewed', { ok: true, meta: { tab: 'export' } })
-// already-caught error (NO capture() in JS — use event)
-try { await pay() } catch (e) {
-  onelo.monitor.event('checkout', { ok: false, error: e instanceof Error ? e.message : String(e) })
-  throw e
-}
-```
+## Snippet source (Phase 4)
+
+The exact API shape lives in [snippets.md](snippets.md), baked into this plugin
+from `@onelo/snippets` at publish time. Take `install` / `init` / `usage` from
+there and replace the feature name.
+
+Never write the call from memory and never adapt another language's snippet —
+the "Good vs bad" examples below are for judging NAMES and PRIMITIVES, not for
+copying syntax.
 
 ## Good vs bad (examples pattern)
 - `event('backend_error', { ok: false })` → `await onelo.monitor.track('backend_call', () => call())`  *(Rules A+B)*

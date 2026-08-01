@@ -24,12 +24,11 @@ branch) for production.
 
 | Stack | Install (from GitHub) |
 |---|---|
-| JavaScript / TypeScript | `npm install github:onelo-tools/onelo-js` (staging: append `#staging`) |
+| JavaScript / TypeScript | `npm install github:onelo-tools/onelo-js`  |
 | Swift (iOS / macOS) | Xcode → Add Package Dependencies → `https://github.com/onelo-tools/onelo-swift` (branch `staging`) |
 | Android (Kotlin) | JitPack (builds from GitHub): in `settings.gradle` add `maven { url "https://jitpack.io" }`, then `implementation("com.github.onelo-tools:onelo-android:+")` |
 | Flutter | `pubspec.yaml` git dep: `onelo_flutter:` → `git: { url: https://github.com/onelo-tools/onelo-flutter, ref: staging }` |
-| Python (FastAPI / Django / Flask / aiohttp) | `pip install "git+https://github.com/onelo-tools/onelo-python.git@staging"` |
-| Go (net/http / Gin / Echo / Fiber / Chi / gRPC) | `go get github.com/onelo-tools/onelo-go@staging` |
+| Python (FastAPI / Django / Flask / aiohttp) | `pip install "git+https://github.com/onelo-tools/onelo-python.git"` |
 
 ## Keep the SDK current (version check)
 
@@ -39,17 +38,16 @@ and if it's behind (or absent), install/update from the ref in the table above.
 
 | Stack | Show installed version | Update to latest |
 |---|---|---|
-| JavaScript / TypeScript | `npm ls @onelo/js` (shows resolved github commit) | re-run `npm install github:onelo-tools/onelo-js#staging` (the github ref fetches newest) |
+| JavaScript / TypeScript | `npm ls @onelo/js` (shows resolved github commit) | re-run `npm install github:onelo-tools/onelo-js` |
 | Swift (iOS / macOS) | grep `onelo-swift` in `Package.resolved` | Xcode → File → Packages → Update to Latest, or `swift package update` |
 | Kotlin (Android) | the version in `build.gradle(.kts)` | bump the JitPack coordinate (`com.github.onelo-tools:onelo-android`) to the latest tag |
 | Flutter | `flutter pub deps \| grep onelo_flutter` (or `pubspec.lock`) | `flutter pub upgrade onelo_flutter` |
-| Python | `pip show onelo` | `pip install -U "git+https://github.com/onelo-tools/onelo-python.git@staging"` |
-| Go | `go list -m github.com/onelo-tools/onelo-go` | `go get -u github.com/onelo-tools/onelo-go@staging` |
+| Python | `pip show onelo` | `pip install -U "git+https://github.com/onelo-tools/onelo-python.git"` |
 
 **How to know the latest version** (SDKs aren't on a registry — read git tags):
 ```bash
 git ls-remote --tags https://github.com/onelo-tools/onelo-js       # → highest v…-staging tag
-# same for onelo-swift / onelo-android / onelo-flutter / onelo-python / onelo-go
+# same for onelo-swift / onelo-android / onelo-flutter / onelo-python
 ```
 Take the highest `*-staging` tag, compare to installed. If you can't confirm the
 version, update anyway — instrumenting against a stale SDK can insert calls the
@@ -60,8 +58,8 @@ installed version doesn't have.
 The instance is what every inserted `onelo.features.feature(...)` call reaches for.
 
 > **`baseURL` matters.** Copy the URL from the dashboard SDK page
-> (`app.onelo.tools` → your app → SDK), which renders the right one for
-> production (`https://app.onelo.tools`) or staging
+> (`onelo.tools` → your app → SDK), which renders the right one for
+> production (`https://api.onelo.tools`) or staging
 > (`https://st.backend.onelo.tools`). Hardcoding production while you're
 > on a staging tenant (or vice versa) silently fails — requests land on
 > the wrong backend with no useful error.
@@ -73,7 +71,7 @@ import { FEATURE_REGISTRY } from './generated/feature-registry'
 
 export const onelo = new Onelo({
   publishableKey: 'pk_live_...',
-  baseURL: 'https://app.onelo.tools',
+  baseURL: 'https://api.onelo.tools',
   // featureDefaultStatus: 'enabled',  // optional — see "Dev-mode default" in troubleshooting.md
 })
 
@@ -89,14 +87,14 @@ import OneloSwift
 let onelo = Onelo(
     publishableKey: "pk_live_...",
     callbackScheme: "myapp",
-    baseURL: URL(string: "https://app.onelo.tools")!,
+    baseURL: URL(string: "https://api.onelo.tools")!,
     featureDefaultStatus: .enabled  // dev: new gates render until enabled in dashboard
 )
 #else
 let onelo = Onelo(
     publishableKey: "pk_live_...",
     callbackScheme: "myapp",
-    baseURL: URL(string: "https://app.onelo.tools")!
+    baseURL: URL(string: "https://api.onelo.tools")!
 )
 #endif
 
@@ -121,7 +119,7 @@ class MyApp : Application() {
         super.onCreate()
         onelo = Onelo(
             publishableKey = "pk_live_...",
-            baseURL = "https://app.onelo.tools",
+            baseURL = "https://api.onelo.tools",
             // featureDefaultStatus = if (BuildConfig.DEBUG) FeatureStatus.ENABLED else FeatureStatus.HIDDEN,
         )
         // Register every instrumented feature upfront — see "Declare" below.
@@ -140,7 +138,7 @@ import 'generated/feature_registry.dart';
 
 final onelo = Onelo(
   publishableKey: 'pk_live_...',
-  baseUrl: 'https://app.onelo.tools',
+  baseUrl: 'https://api.onelo.tools',
   // featureDefaultStatus: kDebugMode ? FeatureStatus.enabled : FeatureStatus.hidden,
 );
 
@@ -182,7 +180,6 @@ snippet to drop into your build config lives in the language reference file's
 - Kotlin / Android Gradle → `kotlin-patterns.md`
 - Flutter / Dart → `flutter-patterns.md`
 - Python → `python-patterns.md`
-- Go → `go-patterns.md`
 
 Wire it once — every build refreshes the registry from current source, so the
 dashboard list stays in lock-step with what the codebase instruments.

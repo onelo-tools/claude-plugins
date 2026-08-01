@@ -610,7 +610,7 @@ from app._generated.feature_registry import FEATURE_REGISTRY
 
 onelo = Onelo(
     publishable_key=os.environ["ONELO_PUBLISHABLE_KEY"],
-    api_url=os.environ.get("ONELO_API_URL", "https://app.onelo.tools"),
+    api_url=os.environ.get("ONELO_API_URL", "https://api.onelo.tools"),
 )
 
 @asynccontextmanager
@@ -641,7 +641,7 @@ class CoreConfig(AppConfig):
         global onelo
         onelo = Onelo(
             publishable_key=os.environ["ONELO_PUBLISHABLE_KEY"],
-            api_url=os.environ.get("ONELO_API_URL", "https://app.onelo.tools"),
+            api_url=os.environ.get("ONELO_API_URL", "https://api.onelo.tools"),
         )
         onelo.features.declare(FEATURE_REGISTRY)
         onelo.ready(timeout=2.0)
@@ -660,7 +660,7 @@ def create_app() -> Flask:
     from app._generated.feature_registry import FEATURE_REGISTRY
     onelo = Onelo(
         publishable_key=os.environ["ONELO_PUBLISHABLE_KEY"],
-        api_url=os.environ.get("ONELO_API_URL", "https://app.onelo.tools"),
+        api_url=os.environ.get("ONELO_API_URL", "https://api.onelo.tools"),
     )
     onelo.features.declare(FEATURE_REGISTRY)
     onelo.ready(timeout=2.0)
@@ -680,7 +680,7 @@ from app._generated.feature_registry import FEATURE_REGISTRY
 
 onelo = Onelo(
     publishable_key=os.environ["ONELO_PUBLISHABLE_KEY"],
-    api_url=os.environ.get("ONELO_API_URL", "https://app.onelo.tools"),
+    api_url=os.environ.get("ONELO_API_URL", "https://api.onelo.tools"),
 )
 onelo.features.declare(FEATURE_REGISTRY)
 onelo.ready(timeout=2.0)

@@ -39,8 +39,9 @@ go. Do NOT jump to detection or instrumentation before Phase 0 is done.
 - Python — backends: [references/python.md](references/python.md)
 - JavaScript / TypeScript — web & SSR/Node (`@onelo/js`): [references/js.md](references/js.md)
 - SDK install / version / init (Swift, Python & JS): [references/sdk-setup.md](references/sdk-setup.md)
+- **Snippets (the code that gets inserted, all platforms): [references/snippets.md](references/snippets.md)**
 
-Electron, React Native, Kotlin, Flutter and Go are **not covered yet** — their
+Electron, React Native, Kotlin and Flutter are **not covered yet** — their
 Monitor surface may be outdated. If the only SDK present is one of those, say so
 and stop (see "Unsupported SDKs"). Never guess their API from another language.
 
@@ -284,12 +285,11 @@ For each approved item (an audit fix, a coverage item, or a single named op):
    from the reference file's decision rules (operation → track; instantaneous →
    event; already-caught error → capture). Derive a snake_case name (Rule G) +
    facet meta (Rule D).
-2. Fetch the canonical snippet — do NOT improvise SDK calls:
-   ```bash
-   curl -sf "${ONELO_API_BASE:-https://app.onelo.tools}/api/snippets?sdk=monitor&lang={lang}"
-   ```
-   Use its `usage` / `init` fields; fall back to the reference file's snippet only
-   if the fetch fails.
+2. Take the canonical snippet from
+   [references/snippets.md](references/snippets.md) — do NOT improvise SDK calls
+   and do NOT adapt another language's snippet. That file ships inside this
+   plugin, baked from `@onelo/snippets` at publish time, so it is exactly what
+   the dashboard and /docs show. No network call needed.
 3. Insert per the reference file's insertion rules. One change per site; touch
    nothing else; never alter existing error propagation.
 
@@ -353,7 +353,7 @@ persistence / background work with no user-facing outcome; PII in meta.
 
 ## Unsupported SDKs (deferred)
 
-Electron, React Native, Kotlin, Flutter and Go are not covered in this version —
+Electron, React Native, Kotlin and Flutter are not covered in this version —
 their Monitor surface may be outdated. If one of those is the only SDK present,
 tell the developer it isn't supported yet and stop. Do not guess the API from
 Swift, Python or JS. (Swift, Python and JavaScript/TypeScript ARE supported — see

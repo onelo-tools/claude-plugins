@@ -99,21 +99,15 @@ event payload are identical. Two things differ:
   (never the simulator), up to ~24h later. Don't expect simulator crash rows;
   don't treat their absence as "no crashes".
 
-## Snippet fetch (Phase 4)
-```bash
-curl -sf "${ONELO_API_BASE:-https://app.onelo.tools}/api/snippets?sdk=monitor&lang=swift"
-```
-Use the `usage` field and replace the feature name. Fallback if the fetch fails:
-```swift
-// operation (async)
-let data = try await onelo.monitor.track("pdf_upload", meta: ["size": file.size]) {
-    try await upload(file)
-}
-// instantaneous
-onelo.monitor.event("tab_viewed", options: .init(ok: true, meta: ["tab": "export"]))
-// already-caught error
-onelo.monitor.capture(error, featureName: "checkout")
-```
+## Snippet source (Phase 4)
+
+The exact API shape lives in [snippets.md](snippets.md), baked into this plugin
+from `@onelo/snippets` at publish time. Take `install` / `init` / `usage` from
+there and replace the feature name.
+
+Never write the call from memory and never adapt another language's snippet —
+the "Good vs bad" examples below are for judging NAMES and PRIMITIVES, not for
+copying syntax.
 
 ## Good vs bad (examples pattern)
 - `event("backend_error", .init(ok: false))` → `try onelo.monitor.track("backend_call") { try call() }`  *(Rules A+B)*

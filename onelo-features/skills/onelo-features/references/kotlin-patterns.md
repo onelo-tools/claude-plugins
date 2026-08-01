@@ -97,7 +97,7 @@ grep -rn --include="*.kt" \
 
 Default to **`isEnabled()`** for "show this content or don't" gates. It
 matches the dashboard's primary on/off semantics and the Kotlin snippet
-shown on `app.onelo.tools`, so docs and codegen stay aligned.
+shown on `onelo.tools`, so docs and codegen stay aligned.
 
 | Check | True when status is | Use for |
 |---|---|---|
@@ -138,7 +138,7 @@ you toggle them in the dashboard:
 ```kotlin
 val onelo = Onelo(
     publishableKey = "pk_live_...",
-    baseURL = "https://app.onelo.tools",
+    baseURL = "https://api.onelo.tools",
     featureDefaultStatus = if (BuildConfig.DEBUG) FeatureStatus.ENABLED else FeatureStatus.HIDDEN,
 )
 ```
@@ -341,7 +341,7 @@ object OneloModule {
     fun provideOnelo(@ApplicationContext context: Context): Onelo =
         Onelo(
             publishableKey = "pk_live_...",
-            baseURL = "https://app.onelo.tools",
+            baseURL = "https://api.onelo.tools",
             featureDefaultStatus = if (BuildConfig.DEBUG) FeatureStatus.ENABLED else FeatureStatus.HIDDEN,
         ).also {
             it.features.declare(FeatureRegistry.all)
@@ -379,7 +379,7 @@ val appModule = module {
     single {
         Onelo(
             publishableKey = "pk_live_...",
-            baseURL = "https://app.onelo.tools",
+            baseURL = "https://api.onelo.tools",
             featureDefaultStatus = if (BuildConfig.DEBUG) FeatureStatus.ENABLED else FeatureStatus.HIDDEN,
         ).also { it.features.declare(FeatureRegistry.all) }
     }

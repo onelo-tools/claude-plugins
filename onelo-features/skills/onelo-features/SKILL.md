@@ -35,8 +35,8 @@ NOT scan or instrument before Phase 0 is done.
 - Kotlin/Android patterns: [references/kotlin-patterns.md](references/kotlin-patterns.md)
 - Flutter/Dart patterns: [references/flutter-patterns.md](references/flutter-patterns.md)
 - Python patterns: [references/python-patterns.md](references/python-patterns.md)
-- Go patterns: [references/go-patterns.md](references/go-patterns.md)
 - SDK setup (install, per-language init, declare, build hook): [references/sdk-setup.md](references/sdk-setup.md)
+- **Snippets (the code that gets inserted): [references/snippets.md](references/snippets.md)**
 - Troubleshooting: [references/troubleshooting.md](references/troubleshooting.md)
 
 ---
@@ -99,7 +99,7 @@ Before scanning or instrumenting:
    Verify the project still builds/imports BEFORE instrumenting, with its native
    command: JS/TS `npm run build` (or `tsc --noEmit`); Swift `swift build`; Kotlin
    `./gradlew assemble`; Flutter `flutter analyze`; Python import the entry
-   (`python -c "import main"`); Go `go build ./...`. If it FAILS, the update broke
+   (`python -c "import main"`). If it FAILS, the update broke
    EXISTING code → fix that first; do not instrument.
 4. Only then proceed to Phase 1. Never instrument against an absent, stale, or
    non-building SDK — you'd insert code the installed version can't run.
@@ -126,7 +126,6 @@ Map findings to platforms and load the corresponding reference files:
 | `build.gradle` or `build.gradle.kts` | Kotlin Android | kotlin-patterns.md |
 | `pubspec.yaml` | Flutter | flutter-patterns.md |
 | `pyproject.toml` / `requirements.txt` / `setup.py` / `Pipfile` / `poetry.lock` | Python backend | python-patterns.md |
-| `go.mod` / `*.go` files / `package main` | Go backend | go-patterns.md |
 
 **Swift platform disambiguation** — a language is not a platform. Decide by framework imports:
 
@@ -378,38 +377,30 @@ After each edit command, update the internal list and re-display the updated tab
 
 For each approved candidate (in order):
 
-1. Fetch the snippet for this language from the Onelo dashboard API. The
-   dashboard exposes the same templates that power the in-app SDK page, so
-   plugin output stays in lock-step with what developers see when they open
-   `app.onelo.tools`. Try the override env var first (used during local
-   plugin development), then the production URL:
+1. Take the snippet for this language from
+   [references/snippets.md](references/snippets.md). It ships inside this plugin,
+   baked from `@onelo/snippets` at publish time — the same source that powers the
+   in-app SDK page and /docs, so plugin output cannot drift from what the
+   developer sees in the dashboard. No network call, no fallback, no env var.
 
-   ```bash
-   ONELO_API_BASE="${ONELO_API_BASE:-https://app.onelo.tools}"
-   curl -sf "$ONELO_API_BASE/api/snippets?sdk=features&lang={lang}" 2>/dev/null
-   ```
+   Sections available: `npm`, `react`, `web`, `swift`, `macos`, `electron`,
+   `reactnative`, `android`, `kotlin`, `flutter`, `python`, `node`, `php`.
+   A language with no section has no supported snippet — say so and skip it
+   rather than adapting another language's code.
 
-   Where `{lang}` is one of: `npm`, `react`, `script`, `swift`, `kotlin`, `reactnative`, `flutter`, `node`, `python`, `go`.
+2. Use the `usage` block. Replace `$NAME` with the `proposed_name` for this
+   candidate.
 
-2. If the fetch succeeds, use the `usage` field from the JSON response as the
-   snippet to insert. Replace `$NAME` with the `proposed_name` for this candidate.
+   For trigger candidates, wrap with `isVisible` instead of the default
+   `isEnabled` check — see the reference file's "Trigger snippet" section.
 
-   For trigger candidates, fetch the snippet using `lang={lang}-trigger`
-   suffix when available; fall back to wrapping the existing snippet with
-   `isVisible` instead of the default `isEnabled` check from the reference
-   file's "Trigger snippet" section.
+3. Read the target file.
 
-3. If the fetch fails (no internet, timeout, dashboard unreachable), fall back
-   to the hardcoded snippet from the reference file for this language. The
-   fallback may be slightly behind the live dashboard but is always shippable.
+4. Find the insertion line using the rules from the reference file for that language.
 
-4. Read the target file.
+5. Insert the snippet, replacing `$NAME` with the `proposed_name`.
 
-5. Find the insertion line using the rules from the reference file for that language.
-
-6. Insert the snippet, replacing `$NAME` with the `proposed_name`.
-
-7. Write the file with Edit tool — insert only the snippet lines, do not modify anything else.
+6. Write the file with Edit tool — insert only the snippet lines, do not modify anything else.
 
 If a file cannot be found or the insertion point cannot be determined, skip and add to the "errors" list.
 

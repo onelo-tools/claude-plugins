@@ -5,14 +5,19 @@
   },
   "plugins": [
     {
+      "name": "onelo-auth",
+      "source": "./onelo-auth",
+      "description": "Wires Onelo Auth (hosted sign-in/sign-up) into your app. Snippets are fetched live from the Onelo API, so they can never go stale. Staging channel \u2014 auto-updates on every commit."
+    },
+    {
       "name": "onelo-features",
       "source": "./onelo-features",
-      "description": "Scans your codebase and inserts onelo-features SDK calls automatically. Staging channel — auto-updates on every commit (cache key = git SHA)."
+      "description": "Scans your codebase and inserts onelo-features SDK calls automatically. Staging channel \u2014 auto-updates on every commit (cache key = git SHA)."
     },
     {
       "name": "onelo-monitor",
       "source": "./onelo-monitor",
-      "description": "Audits and instruments Onelo Monitor SDK usage (Swift, Python). Staging channel — auto-updates on every commit (cache key = git SHA)."
+      "description": "Audits and instruments Onelo Monitor SDK usage (Swift, Python). Staging channel \u2014 auto-updates on every commit (cache key = git SHA)."
     }
   ]
 }

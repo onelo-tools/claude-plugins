@@ -26,7 +26,6 @@ for your language. The plugin works against the unified Onelo SDKs:
 | Kotlin (Android) | `onelo-android` (JitPack) |
 | Flutter | `onelo` (pub.dev) |
 | Python (FastAPI / Flask / Django) | direct REST integration |
-| Go (net/http / Gin) | direct REST integration |
 
 ## Skills included
 
@@ -52,20 +51,17 @@ The skill detects your language(s), scans for feature-worthy locations
 names, waits for your review, then inserts SDK snippets at the right
 spot in each file.
 
-After instrumentation, head to the [Onelo dashboard](https://app.onelo.tools)
+After instrumentation, head to the [Onelo dashboard](https://onelo.tools)
 → Features → Registry — your discovered features show up tagged
 **JUST ADDED**. Configure visibility per feature, then click **Deploy** to
 push the rules to every connected SDK in real time over SSE.
 
-## Live snippet templates
+## Snippet source
 
-Snippets are fetched live from `https://app.onelo.tools/api/snippets` so
-the inserted code always matches what the dashboard's SDK page shows.
-A hardcoded fallback (in `skills/onelo-features/references/*.md`) is used
-when the dashboard is unreachable.
+Snippets are **baked into this plugin at publish time** from `@onelo/snippets` —
+the same source the dashboard SDK page and /docs render from — so the inserted
+code always matches what a developer sees in the dashboard.
 
-To point the plugin at a non-production dashboard during development:
-
-```bash
-export ONELO_API_BASE="https://st.onelo.tools"
-```
+They live in `skills/onelo-features/references/snippets.md`. Nothing is fetched
+at runtime: a published skill can't hand you a snippet that was mid-rework when
+you happened to run it, and there is no stale fallback copy left to drift.

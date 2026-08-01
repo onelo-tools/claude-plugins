@@ -1,0 +1,11 @@
+{
+  "name": "onelo-auth",
+  "version": "1.0.0",
+  "description": "Onelo Auth starter for Claude Code. Detects your platform and wires hosted authentication into your app using the official Onelo snippet shipped with this plugin.",
+  "author": {
+    "name": "onelo-tools"
+  },
+  "homepage": "https://onelo.tools",
+  "repository": "https://github.com/onelo-tools/claude-plugins",
+  "license": "MIT"
+}

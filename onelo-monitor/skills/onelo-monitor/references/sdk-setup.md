@@ -17,9 +17,9 @@ initialising (see below).
 
 | Stack | Install |
 |---|---|
-| Swift (iOS / macOS) | Swift Package — `https://github.com/onelo-tools/onelo-swift` (branch: `staging`) |
-| Python (FastAPI / Django / Flask / Litestar) | `pip install "git+https://github.com/onelo-tools/onelo-python.git@staging"` — extras: `onelo[fastapi]` / `[django]` / `[flask]` / `[litestar]` |
-| JS / TS (vanilla / React / Vue / Next.js / Node) | `npm install github:onelo-tools/onelo-js#staging` (prod: drop `#staging`). Package `@onelo/js`. |
+| Swift (iOS / macOS) | Swift Package — `https://github.com/onelo-tools/onelo-swift` |
+| Python (FastAPI / Django / Flask / Litestar) | `pip install "git+https://github.com/onelo-tools/onelo-python.git"` — extras: `onelo[fastapi]` / `[django]` / `[flask]` / `[litestar]` |
+| JS / TS (vanilla / React / Vue / Next.js / Node) | `npm install github:onelo-tools/onelo-js`. Package `@onelo/js`. |
 
 ## Keep the SDK current (version check)
 The snippets this skill inserts may use APIs added in newer versions —
@@ -28,8 +28,8 @@ instrumenting against a stale SDK can insert calls the installed version lacks.
 | Stack | Show installed version | Update |
 |---|---|---|
 | Swift | grep `onelo-swift` in `Package.resolved` | Xcode → File → Packages → Update to Latest, or `swift package update` |
-| Python | `pip show onelo` | `pip install -U "git+https://github.com/onelo-tools/onelo-python.git@staging"` |
-| JS | `npm ls @onelo/js` / `version` in `node_modules/@onelo/js/package.json` | `npm install github:onelo-tools/onelo-js#staging` again (re-pulls the branch HEAD) |
+| Python | `pip show onelo` | `pip install -U "git+https://github.com/onelo-tools/onelo-python.git"` |
+| JS | `npm ls @onelo/js` / `version` in `node_modules/@onelo/js/package.json` | `npm install github:onelo-tools/onelo-js` again (re-pulls the branch HEAD) |
 
 **How to know the latest version:** the SDKs aren't on a package registry, so read
 the git tags directly:
@@ -56,9 +56,9 @@ import OneloSwift
 @main
 struct MyApp: App {
   @StateObject private var onelo = Onelo(
-    publishableKey: "{{publishableKey}}",
+    publishableKey: "onelo_pk_live_YOUR_KEY",
     callbackScheme: "myapp",
-    baseURL: URL(string: "{{apiUrl}}")!
+    baseURL: URL(string: "https://api.onelo.tools")!
   )
   var body: some Scene { WindowGroup { ContentView().environmentObject(onelo) } }
 }
@@ -83,7 +83,7 @@ server-side credential.)
 import os
 from onelo import Onelo, monitor
 
-onelo = Onelo(secret_key=os.environ["ONELO_SECRET_KEY"], api_url="{{apiUrl}}")
+onelo = Onelo(secret_key=os.environ["ONELO_SECRET_KEY"], api_url="https://api.onelo.tools")
 # Monitor is a single event stream — no test/live split (that's a Features-only
 # concept). `environment` is just an OPTIONAL free-form deploy label/tag; omit it
 # and the SDK reads ONELO_ENVIRONMENT / ENVIRONMENT only if you set them.
@@ -111,8 +111,8 @@ up in the client bundle, which is fine.)
 import { Onelo } from '@onelo/js'
 
 export const onelo = new Onelo({
-  publishableKey: '{{publishableKey}}',   // onelo_pk_live_* — public app identifier
-  apiUrl: '{{apiUrl}}',
+  publishableKey: 'onelo_pk_live_YOUR_KEY',   // onelo_pk_live_* — public app identifier
+  apiUrl: 'https://api.onelo.tools',
   // Optional → surface as Release / App build / Environment columns:
   // appVersion: '1.2.0', appBuild: '420', environment: 'production',
 })

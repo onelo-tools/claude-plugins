@@ -82,7 +82,7 @@ For StatefulWidget, instrument the `_XState` class's `build()` method, use the w
 
 Default to **`isEnabled`** for "show this content or don't" gates. It
 matches the dashboard's primary on/off semantics and the Flutter snippet
-shown on `app.onelo.tools`, so docs and codegen stay aligned.
+shown on `onelo.tools`, so docs and codegen stay aligned.
 
 | Check | True when status is | Use for |
 |---|---|---|
@@ -123,7 +123,7 @@ import 'package:onelo_flutter/onelo_flutter.dart';
 
 final onelo = Onelo(
   publishableKey: 'pk_live_...',
-  baseUrl: 'https://app.onelo.tools',
+  baseUrl: 'https://api.onelo.tools',
   featureDefaultStatus: kDebugMode ? FeatureStatus.enabled : FeatureStatus.hidden,
 );
 ```
@@ -314,7 +314,7 @@ import 'package:onelo_flutter/onelo_flutter.dart';
 final oneloProvider = Provider<Onelo>((ref) {
   final onelo = Onelo(
     publishableKey: 'pk_live_...',
-    baseUrl: 'https://app.onelo.tools',
+    baseUrl: 'https://api.onelo.tools',
     featureDefaultStatus: kDebugMode ? FeatureStatus.enabled : FeatureStatus.hidden,
   );
   onelo.features.declare(FeatureRegistry.all);
@@ -354,7 +354,7 @@ For projects already using `package:provider`, expose Onelo via
 ```dart
 final onelo = Onelo(
   publishableKey: 'pk_live_...',
-  baseUrl: 'https://app.onelo.tools',
+  baseUrl: 'https://api.onelo.tools',
   featureDefaultStatus: kDebugMode ? FeatureStatus.enabled : FeatureStatus.hidden,
 );
 onelo.features.declare(FeatureRegistry.all);
@@ -388,7 +388,7 @@ For BLoC projects, treat Onelo as a repository and expose it via
 void main() {
   final onelo = Onelo(
     publishableKey: 'pk_live_...',
-    baseUrl: 'https://app.onelo.tools',
+    baseUrl: 'https://api.onelo.tools',
     featureDefaultStatus: kDebugMode ? FeatureStatus.enabled : FeatureStatus.hidden,
   );
   onelo.features.declare(FeatureRegistry.all);

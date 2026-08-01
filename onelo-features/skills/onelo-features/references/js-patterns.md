@@ -100,7 +100,7 @@ From each grep match, extract the symbol name:
 
 Default to **`isEnabled`** for "show this content or don't" gates. It
 matches the dashboard's primary on/off semantics and the JS snippet
-shown on `app.onelo.tools`, so docs and codegen stay aligned.
+shown on `onelo.tools`, so docs and codegen stay aligned.
 
 | Check | True when status is | Use for |
 |---|---|---|
@@ -155,7 +155,7 @@ import { Onelo } from '@onelo/js'
 
 export const onelo = new Onelo({
   publishableKey: 'pk_live_...',
-  baseURL: 'https://app.onelo.tools',
+  baseURL: 'https://api.onelo.tools',
   featureDefaultStatus: process.env.NODE_ENV === 'development' ? 'enabled' : 'hidden',
 })
 ```

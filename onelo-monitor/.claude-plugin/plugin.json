@@ -1,5 +1,6 @@
 {
   "name": "onelo-monitor",
+  "version": "1.0.0",
   "description": "Onelo Monitor instrumentation plugin for Claude Code. Audits existing monitor usage for anti-patterns and instruments new operations with the correct primitive, name, and meta.",
   "author": {
     "name": "onelo-tools"
