@@ -5,9 +5,21 @@
   },
   "plugins": [
     {
+      "name": "onelo",
+      "source": "./onelo"
+    },
+    {
       "name": "onelo-auth",
       "source": "./onelo-auth",
       "description": "Wires Onelo Auth (hosted sign-in/sign-up) into your app. Snippets are fetched live from the Onelo API, so they can never go stale. Staging channel \u2014 auto-updates on every commit."
+    },
+    {
+      "name": "onelo-branding",
+      "source": "./onelo-branding"
+    },
+    {
+      "name": "onelo-customer-portal",
+      "source": "./onelo-customer-portal"
     },
     {
       "name": "onelo-features",
@@ -15,9 +27,30 @@
       "description": "Scans your codebase and inserts onelo-features SDK calls automatically. Staging channel \u2014 auto-updates on every commit (cache key = git SHA)."
     },
     {
+      "name": "onelo-feedback",
+      "source": "./onelo-feedback"
+    },
+    {
       "name": "onelo-monitor",
       "source": "./onelo-monitor",
       "description": "Audits and instruments Onelo Monitor SDK usage (Swift, Python). Staging channel \u2014 auto-updates on every commit (cache key = git SHA)."
+    },
+    {
+      "name": "onelo-quickstart",
+      "source": "./onelo-quickstart"
+    },
+    {
+      "name": "onelo-roadmap",
+      "source": "./onelo-roadmap"
+    },
+    {
+      "name": "onelo-store",
+      "source": "./onelo-store"
+    },
+    {
+      "name": "onelo-waitlist",
+      "source": "./onelo-waitlist"
     }
-  ]
+  ],
+  "description": "Onelo developer tooling for Claude Code \u2014 auth, store, waitlist, customer portal, feature flags, feedback, roadmap, monitoring and branding. Install the onelo bundle to get everything at once."
 }

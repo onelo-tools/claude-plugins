@@ -1,0 +1,9 @@
+{
+  "name": "onelo-feedback",
+  "version": "1.0.0",
+  "description": "Onelo Feedback integration for Claude Code. Wires an in-app \"Report a bug\" or \"Send feedback\" entry point that opens Onelo's hosted report form.",
+  "author": { "name": "onelo-tools" },
+  "homepage": "https://onelo.tools",
+  "repository": "https://github.com/onelo-tools/claude-plugins",
+  "license": "MIT"
+}

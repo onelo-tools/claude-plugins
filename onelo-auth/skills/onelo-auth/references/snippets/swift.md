@@ -5,7 +5,7 @@ source the dashboard **SDK** tab and **/docs** render from. Insert it as-is;
 never write an Onelo SDK call from memory and never adapt another platform's
 snippet.
 
-> One snippet covers macOS and iOS — the SDK code is identical.
+> One snippet covers iOS and macOS — the SDK code is identical.
 
 ## install
 <!-- onelo:snippet sdk=auth lang=macos field=install -->

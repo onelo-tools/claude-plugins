@@ -1,0 +1,9 @@
+{
+  "name": "onelo-roadmap",
+  "version": "1.0.0",
+  "description": "Onelo Roadmap integration for Claude Code. Publishes a hosted public roadmap page and links or embeds it — no SDK code involved.",
+  "author": { "name": "onelo-tools" },
+  "homepage": "https://onelo.tools",
+  "repository": "https://github.com/onelo-tools/claude-plugins",
+  "license": "MIT"
+}

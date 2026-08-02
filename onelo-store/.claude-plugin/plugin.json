@@ -1,0 +1,11 @@
+{
+  "name": "onelo-store",
+  "version": "1.0.0",
+  "description": "Onelo Store integration for Claude Code. Embeds the hosted store on a website, or explains the in-app store that Onelo Auth drives in native apps.",
+  "author": {
+    "name": "onelo-tools"
+  },
+  "homepage": "https://onelo.tools",
+  "repository": "https://github.com/onelo-tools/claude-plugins",
+  "license": "MIT"
+}

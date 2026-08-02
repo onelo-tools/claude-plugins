@@ -12,7 +12,7 @@ reading any docs. This skill does the wiring; the dashboard does the rest.
 ## Run checklist — copy into your FIRST reply and tick off IN ORDER
 
 ```
-- [ ] 0 · Prerequisites: app exists, publishable key + apiUrl in hand
+- [ ] 0 · Prerequisites: app exists, the RIGHT key (pk client / sk backend) + apiUrl
 - [ ] 1 · Detect the platform(s) in this project → report what you found
 - [ ] 2 · READ the snippet from references/ (never write one from memory)
 - [ ] 3 · Propose where it goes → WAIT for approval
@@ -69,6 +69,21 @@ Before touching code, confirm the developer has:
 2. **The publishable key** (dashboard → **SDK** tab, shown at the top,
    `onelo_pk_live_…` / `onelo_pk_test_…`).
 3. **The API URL** — shown in the same snippet.
+
+### Which key, and where it comes from
+
+| Side | Key | Where |
+|---|---|---|
+| Client / frontend | **publishable** `onelo_pk_live_…` — a public app identifier, safe to ship | dashboard → **SDK** tab, top |
+| Server / backend | **secret** `onelo_sk_live_…` — a trusted credential | dashboard → **API Keys → Secret keys** |
+
+A backend authenticates as the server, not as an app, so it uses the secret key
+— never a publishable one. Read it from the environment (`ONELO_SECRET_KEY`);
+never hard-code it and never let it reach client code.
+
+Ask for the key you actually need **before** proposing changes. Discovering
+mid-insert that a backend needs a second, differently-scoped credential wastes
+the developer's turn.
 
 Never invent or guess a key. If they don't have one, stop and point at the SDK
 tab; everything else here depends on it.

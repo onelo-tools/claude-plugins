@@ -1,0 +1,11 @@
+{
+  "name": "onelo-customer-portal",
+  "version": "1.0.0",
+  "description": "Onelo Customer Portal integration for Claude Code. Wires a \"Manage subscription\" entry point that opens Onelo's hosted portal — cancel, change plan, refunds and invoices.",
+  "author": {
+    "name": "onelo-tools"
+  },
+  "homepage": "https://onelo.tools",
+  "repository": "https://github.com/onelo-tools/claude-plugins",
+  "license": "MIT"
+}

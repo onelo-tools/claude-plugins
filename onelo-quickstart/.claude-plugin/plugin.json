@@ -1,0 +1,9 @@
+{
+  "name": "onelo-quickstart",
+  "version": "1.0.0",
+  "description": "Start here. Explains what Onelo does, works out which parts your product needs, and walks you through setting them up in the right order.",
+  "author": { "name": "onelo-tools" },
+  "homepage": "https://onelo.tools",
+  "repository": "https://github.com/onelo-tools/claude-plugins",
+  "license": "MIT"
+}

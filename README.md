@@ -5,17 +5,33 @@ Add it once and get every plugin below; updates arrive on `/plugin marketplace u
 
 ```bash
 /plugin marketplace add onelo-tools/claude-plugins
+/plugin install onelo@onelo-tools
+```
+
+`onelo` is a **bundle**: it ships no skills of its own and declares every plugin
+below as a dependency, so one install pulls them all in. Then run
+`/onelo-quickstart` — it works out which parts your product needs.
+
+Prefer to pick your own? Install any single one:
+
+```bash
 /plugin install onelo-auth@onelo-tools
-/plugin install onelo-features@onelo-tools
-/plugin install onelo-monitor@onelo-tools
 ```
 
 ## Plugins
 
 | Plugin | Command | What it does |
 |---|---|---|
+| **onelo** | — | **Bundle.** Installs every plugin below in one command. |
+| **onelo-quickstart** | `/onelo-quickstart` | **Start here.** Explains what Onelo does, works out which parts your product needs, and walks you through them in order. |
 | **onelo-auth** | `/onelo-auth` | Wires Onelo's hosted sign-in into your app — detects the platform, inserts the snippet, and gates your UI on the resolved session. |
+| **onelo-store** | `/onelo-store` | Sells plans: embeds the hosted store on a website, or sets up the in-app store that Onelo Auth drives in native apps. |
+| **onelo-customer-portal** | `/onelo-customer-portal` | Adds a "Manage subscription" entry point — Onelo's hosted portal for cancel, change plan, refunds and invoices. |
+| **onelo-waitlist** | `/onelo-waitlist` | Collects pre-launch signups on a page that turns itself into your store at launch. |
 | **onelo-features** | `/onelo-features` | Scans your codebase for instrumentable features and inserts Onelo Features SDK calls. |
+| **onelo-feedback** | `/onelo-feedback` | Wires in-app bug reports and feature requests into Onelo's hosted form, with the reporter and their active features attached. |
+| **onelo-roadmap** | `/onelo-roadmap` | Publishes a public roadmap page and links or embeds it — no SDK code. |
+| **onelo-branding** | `/onelo-branding` | Brands every hosted page from one theme, and writes Custom CSS for what the controls can't express. |
 | **onelo-monitor** | `/onelo-monitor` | Audits existing Onelo Monitor usage for anti-patterns and instruments new operations. |
 
 ## The code these plugins insert
@@ -51,11 +67,18 @@ is byte-for-byte what was validated in staging.
 ```
 claude-plugins/
 ├── .claude-plugin/marketplace.json   # lists every plugin (relative ./ sources)
+├── onelo-quickstart/
 ├── onelo-auth/
 │   ├── .claude-plugin/plugin.json
 │   └── skills/onelo-auth/
 │       ├── SKILL.md
 │       └── references/snippets/      #   one file per platform (baked)
+├── onelo-store/
+├── onelo-customer-portal/
+├── onelo-waitlist/
+├── onelo-feedback/
+├── onelo-roadmap/
+├── onelo-branding/
 ├── onelo-features/                   # one plugin
 │   ├── .claude-plugin/plugin.json    #   name + pinned version
 │   └── skills/onelo-features/

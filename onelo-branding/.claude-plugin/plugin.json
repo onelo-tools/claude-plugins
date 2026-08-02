@@ -1,0 +1,9 @@
+{
+  "name": "onelo-branding",
+  "version": "1.0.0",
+  "description": "Brands every Onelo-hosted page from one theme — sign-in, checkout, store, portal, waitlist, feedback and roadmap — and writes Custom CSS for what the controls can't express.",
+  "author": { "name": "onelo-tools" },
+  "homepage": "https://onelo.tools",
+  "repository": "https://github.com/onelo-tools/claude-plugins",
+  "license": "MIT"
+}

@@ -19,9 +19,11 @@ NOT scan or instrument before Phase 0 is done.
 - [ ] 0a · SDK installed? if not → install (references/sdk-setup.md)
 - [ ] 0b · Installed version vs LATEST tag — if behind OR unsure, UPDATE first
 - [ ] 0c · Smoke-test: project still builds/imports after install/update (native build/import cmd)
-- [ ] 1   · Detect platform(s)
-- [ ] 2   · Scan (destinations + triggers + capabilities)
+- [ ] 1   · Detect the STACK (frontend AND backend) → report the map
+- [ ] 1.5 · OFFER the guided walkthrough — always, before scanning
+- [ ] 2   · Scan (destinations + triggers + capabilities) — material, not verdict
 - [ ] 2.5 · Classify (atom filter)
+- [ ] 2.7 · Model: threads across the stack + sub-features + names
 - [ ] 3   · Propose → 4 · WAIT for approval
 - [ ] 5   · Implement (+ 5b generate registry)
 - [ ] 6   · Report (+ wire SDK: references/sdk-setup.md)
@@ -56,49 +58,23 @@ One file per platform. Open ONLY the one you detected.
 - Kotlin/Android patterns: [references/kotlin-patterns.md](references/kotlin-patterns.md)
 - Flutter/Dart patterns: [references/flutter-patterns.md](references/flutter-patterns.md)
 - Python patterns: [references/python-patterns.md](references/python-patterns.md)
+- **Feature modelling — the walkthrough, sub-features, naming, cross-stack threads: [references/feature-modelling.md](references/feature-modelling.md)**
 - **Classification rules (Phase 2.5 atom filter): [references/classification-rules.md](references/classification-rules.md)**
 - SDK setup (install, per-language init, declare, build hook): [references/sdk-setup.md](references/sdk-setup.md)
 - Troubleshooting: [references/troubleshooting.md](references/troubleshooting.md)
 
 ---
 
-## Gating philosophy — gate functionality, not atoms
+## Gating philosophy — in one paragraph
 
-A feature flag is a contract with the user: "this part of the product is
-on/off for you right now." Therefore, gate **whole pieces of functionality**
-the user perceives as "a thing the app can do" — screens, tabs, windows,
-modals, route handlers, end-to-end flows. **Do not** gate the small UI
-building blocks those screens are made of.
+Gate whole pieces of functionality the user perceives as "a thing the app can
+do" — screens, flows, capabilities — never the atoms they are built from. And
+gate a feature's **full surface**: a destination whose trigger stays visible
+means users click into nothing and conclude the app is broken. One gate per
+presentation layer, in the screen itself, never in its ViewModel.
 
-If you flag `ResultBanner` separately from `GameBoard`, you can produce
-nonsensical states — the banner hidden but the board still running, leaving
-a half-finished game with no result UI. Atoms are implementation details of
-a screen; the screen is the unit users (and your analytics, and your billing)
-actually reason about.
-
-**The opposite failure mode — orphaned triggers — is just as nonsensical.**
-If you gate `SettingsWindow` but leave the toolbar button that opens it
-visible, users click it and the app silently fails — they conclude the app
-is broken. A feature isn't a single component; it's the **destination plus
-every entry point that reaches it**. Phase 2 grep patterns include trigger
-detection per language; Phase 2.5's new Rule 0 keeps triggers linked to
-their destination so a feature's full surface gates as one unit. Triggers
-default to `isVisible` (hide only when the feature's status is explicitly
-`hidden`) so admin-controlled states like `greyed` (paid upsell) or
-`coming_soon` (teaser) keep the trigger reachable without any code change.
-
-The full classification rules — what counts as a screen, what counts as an
-atom, what to skip — live in **Phase 2.5** below. Each language's reference
-file only adds the *language-specific* signals (e.g. SwiftUI's
-`WindowGroup`, Flutter's `Scaffold` rule, Next.js's `app/<route>/page.tsx`
-routing convention) on top of those generic rules.
-
-**One gate per presentation layer.** Gate the screen in the screen (its
-`body` / `viewDidLoad` / render function) — NOT in its ViewModel. A
-ViewModel guard leaves the UI rendered but inert: the user sees the screen,
-clicks, and nothing happens — indistinguishable from a bug. ViewModel/handler
-guards are reserved for capabilities (action handlers), where the UI trigger
-is gated separately with `isVisible`.
+The reasoning, the failure modes and the per-language nuances live in
+[references/feature-modelling.md](references/feature-modelling.md).
 
 ---
 
@@ -124,6 +100,15 @@ Before scanning or instrumenting:
    EXISTING code → fix that first; do not instrument.
 4. Only then proceed to Phase 1. Never instrument against an absent, stale, or
    non-building SDK — you'd insert code the installed version can't run.
+
+---
+
+## Keys
+
+Frontend → **publishable** `onelo_pk_live_…` (dashboard → **SDK** tab).
+Backend → **secret** `onelo_sk_live_…` (dashboard → **API Keys → Secret keys**),
+read from `ONELO_SECRET_KEY`; never hard-coded, never in client code.
+A feature threaded across the stack needs BOTH — ask for each up front.
 
 ---
 
@@ -163,7 +148,49 @@ grep -rln --include="*.swift" -E "import UIKit|UIApplicationDelegate|UIViewContr
 
 Multiple platforms are possible (e.g. Next.js frontend + native mobile). Load all relevant references.
 
-Read the reference file(s) now before proceeding to Phase 2.
+### Report the stack map — out loud, before anything else
+
+A feature ends where it actually ends. If the app has a backend, a feature that
+starts in the UI often finishes in a request handler, and gating only the UI
+leaves the endpoint open. You cannot reason about that without knowing the shape
+of the stack, so state it:
+
+```
+Stack detected
+  frontend  Swift (iOS)     ./App
+  backend   Python FastAPI  ./server
+```
+
+If you find a frontend and no backend, say so — it means every feature ends in
+the app, which is simpler and worth confirming rather than assuming.
+
+Read the reference file(s) now before proceeding.
+
+---
+
+## Phase 1.5 — Offer the walkthrough (ALWAYS offer; never force)
+
+Before scanning, put this choice to the developer verbatim:
+
+```
+Two ways to do this:
+
+[A] Walk me through it  — I ask about your product feature by feature, map each
+    one to your code, and we name them together. Best result, ~10 minutes.
+[B] Scan and propose    — I read the codebase and hand you a list to correct.
+    Faster; I will miss features that have no screen or button.
+
+Which one?
+```
+
+**A is the recommended default** — say so. A scan finds code shapes; only the
+developer knows which of them their users would call a feature, and which part
+of one they intend to sell separately.
+
+If they pick **A**, run [references/feature-modelling.md](references/feature-modelling.md)
+and use the scan below as raw material for its step 4.
+If they pick **B**, continue straight to Phase 2 — but you still owe them the
+modelling pass in Phase 2.7, just without the interview.
 
 ---
 
@@ -215,11 +242,17 @@ For each capability match, record: `file`, `line`, `symbol`, `lang`,
 `kind: capability`, and `invoked_from` (the UI element that calls it —
 button, menu item, shortcut).
 
-**Anti-noise filter (mandatory):** a capability candidate MUST be invoked
-from at least one UI element. Pure internal functions — init paths,
-persistence, background sync not triggered by the user — are exactly the
-"internal processes" that must NOT become features. If you cannot find a
-UI call site, drop the candidate.
+**Anti-noise filter:** a capability candidate normally needs at least one UI
+call site. Pure internal functions — init paths, persistence, background sync
+nobody triggers — are the "internal processes" that must NOT become features.
+
+**But do not drop a no-UI candidate silently.** Some genuine product features
+have no screen and no button: email notifications, webhooks, remove-branding.
+If a candidate changes product BEHAVIOUR (a config boolean, a branch on plan or
+tier, a per-tenant toggle, a switchable integration) but has no UI trigger, keep
+it and mark it `needs-confirmation` — then ask in Phase 2.7. Silently filtering
+it out is the expensive outcome, because the developer never learns it was
+missed. Plumbing with no behavioural effect still gets dropped.
 
 Naming: name the action, not the widget — `export-recording`, never
 `export-button`. The capability gets TWO insertions sharing one feature
@@ -244,9 +277,60 @@ dropped in the proposal header.
 
 ---
 
+## Phase 2.7 — Model: threads, sub-features, names
+
+The scan gave you locations. This turns them into features. Do it whether or not
+the developer took the walkthrough — full rules in
+[references/feature-modelling.md](references/feature-modelling.md).
+
+**1. Thread each feature across the stack.** Group the candidates that belong to
+ONE feature, including the backend end of it:
+
+```
+feedback
+  ├─ Swift   ReportBugButton.swift:42   (trigger)
+  ├─ Swift   FeedbackSheet.swift:18     (destination)
+  └─ Python  routes/feedback.py:87      (handler — where it ends)
+```
+
+A scan sees an HTTP call, not which endpoint answers it — so **ask** when the
+link isn't obvious, and show the thread you believe in for correction.
+
+**2. One feature = ONE name, on every point of the thread.** Onelo keys the
+registry by name: `feedback` declared from Swift and `feedback` declared from
+Python becomes a single entry tagged with both platforms. Two different names
+silently create two features and the tagging never happens.
+
+**3. Ask for sub-features on every paid feature:** *"is there a part of this you
+want to sell separately?"* If yes, it takes the parent's name plus a hyphen —
+`feedback` → `feedback-bug`. Developers rarely volunteer these, and they are
+where the upsell lives.
+
+**4. Never drop a no-UI candidate silently.** Product capabilities like email
+notifications, webhooks or remove-branding have no screen and no button. Mark
+them `needs-confirmation` and ask, rather than filtering them out.
+
+---
+
 ## Phase 3 — Propose
 
-Display this grouped table:
+Group the table **by feature**, not by file — one block per feature showing
+every point of its thread, sub-features nested under their parent, and anything
+still unconfirmed called out:
+
+```
+feedback                                    (Swift + Python)
+  trigger      ReportBugButton.swift:42
+  destination  FeedbackSheet.swift:18
+  handler      routes/feedback.py:87
+  └ feedback-bug        sub-feature — paid
+      handler  routes/feedback.py:104
+
+email-notifications                         needs-confirmation
+  no UI trigger found — is this a feature you sell, or plumbing?
+```
+
+Then display this grouped table:
 
 ```
 Found N features (M destinations + K triggers):
@@ -298,6 +382,15 @@ After each edit command, update the internal list and re-display the updated tab
 ---
 
 ## Phase 5 — Implement
+
+**Implement a feature THREAD at a time, not a file at a time.** All points of one
+feature — trigger, destination and the backend handler where it ends — go in
+together, with the SAME feature name. A half-wrapped feature is worse than an
+unwrapped one: the UI hides while the endpoint stays open, so the feature is off
+for honest users and on for anyone with the URL.
+
+Do not rename between platforms to "make it clearer". Identical names on both
+sides are what make Onelo record ONE registry entry tagged with both platforms.
 
 For each approved candidate (in order):
 

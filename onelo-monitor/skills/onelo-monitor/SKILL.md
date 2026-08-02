@@ -202,6 +202,24 @@ Before auditing or instrumenting:
 
 ---
 
+## Keys — which one, and where
+### Which key, and where it comes from
+
+| Side | Key | Where |
+|---|---|---|
+| Client / frontend | **publishable** `onelo_pk_live_…` — a public app identifier, safe to ship | dashboard → **SDK** tab, top |
+| Server / backend | **secret** `onelo_sk_live_…` — a trusted credential | dashboard → **API Keys → Secret keys** |
+
+A backend authenticates as the server, not as an app, so it uses the secret key
+— never a publishable one. Read it from the environment (`ONELO_SECRET_KEY`);
+never hard-code it and never let it reach client code.
+
+Ask for the key you actually need **before** proposing changes. Discovering
+mid-insert that a backend needs a second, differently-scoped credential wastes
+the developer's turn.
+
+---
+
 ## Phase 1 — Detect (always first)
 
 Survey the ground before touching anything:

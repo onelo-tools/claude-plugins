@@ -1,0 +1,21 @@
+{
+  "name": "onelo",
+  "version": "1.0.0",
+  "description": "Everything Onelo, in one install. A bundle: it ships no skills of its own and pulls in every Onelo plugin as a dependency.",
+  "author": { "name": "onelo-tools" },
+  "homepage": "https://onelo.tools",
+  "repository": "https://github.com/onelo-tools/claude-plugins",
+  "license": "MIT",
+  "dependencies": [
+    "onelo-quickstart",
+    "onelo-auth",
+    "onelo-store",
+    "onelo-waitlist",
+    "onelo-customer-portal",
+    "onelo-features",
+    "onelo-feedback",
+    "onelo-roadmap",
+    "onelo-monitor",
+    "onelo-branding"
+  ]
+}

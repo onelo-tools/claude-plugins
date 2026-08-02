@@ -1,0 +1,11 @@
+{
+  "name": "onelo-waitlist",
+  "version": "1.0.0",
+  "description": "Onelo Waitlist integration for Claude Code. Embeds the hosted waitlist on a website, or wires a custom signup form, and explains how the page turns itself into your store at launch.",
+  "author": {
+    "name": "onelo-tools"
+  },
+  "homepage": "https://onelo.tools",
+  "repository": "https://github.com/onelo-tools/claude-plugins",
+  "license": "MIT"
+}
