@@ -50,6 +50,19 @@ const out = onelo.monitor.track('parse', () => parse(input), { meta: { bytes } }
 `track` returns the callback's result and re-throws on error — keep the `await`
 and the assignment; never change the surrounding `try/catch`.
 
+**Rule A2 in JS — `track()` only sees a THROW.** A callback that resolves
+`null` / `undefined` / `[]` / `false` is recorded as a success. Anything that
+signals failure by returning empty must `throw` inside the callback:
+```ts
+const session = await onelo.monitor.track('sign_in', async () => {
+  const s = await onelo.auth.loadAuthView()   // null on cancel AND on a dead embed
+  if (!s) throw new Error('no_session')       // ← raise INSIDE
+  return s
+})
+```
+Handle the rejection outside. Never add a separate
+`event('sign_in_failed', {ok:false})` — that splits one feature into two rows.
+
 ## Grep patterns
 Call sites:
 ```bash
@@ -147,6 +160,8 @@ copying syntax.
 
 ## Good vs bad (examples pattern)
 - `event('backend_error', { ok: false })` → `await onelo.monitor.track('backend_call', () => call())`  *(Rules A+B)*
+- `track('sign_in', () => loadAuthView())` resolving `null` on failure → `throw` inside the callback when the session is missing  *(Rule A2 — false green)*
+- `track('notes_load', () => db.all())` returning `[]` when storage is unreadable → distinguish "empty" from "unreadable" and throw on the latter  *(Rule A2)*
 - `event('permission_denied', { ok: false })` → `event('permission_check', { ok: false, error: 'denied' })`  *(Rule B)*
 - `event('export_started'); …; event('export_completed')` → `track('export', () => …)`  *(Rule E)*
 - `track('ai_response', fn)` with no meta → add `{ meta: { model: 'gpt-4' } }`  *(Rule D)*

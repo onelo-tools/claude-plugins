@@ -96,6 +96,34 @@ From each grep match, extract the symbol name:
 > produces a TypeScript "expression is not callable" error and a runtime
 > `TypeError` at the same line.
 
+### Avoid the first-paint flicker (client components only)
+
+`identify(userId)` (or Onelo Auth's own session resolve) settles per-user
+targeting over the **network**. In a React/Next.js Client Component, a
+`feature(...)` read on the FIRST render — right after mount, before that
+resolve settles — can be for the wrong user (or a default) for a moment. If
+the component treats "not yet known" the same as `hidden` (the common
+mistake: `if (!feat.isEnabled) return null` with no separate loading state), a
+real feature flashes then disappears then reappears once the real state
+arrives. This reads as a caching bug in Onelo — it isn't; the component asked
+before the SDK had an answer to give.
+
+Fix: track readiness and render a skeleton, not `null`, until it settles.
+`onelo.features.ready(timeoutMs)` resolves once the first per-user snapshot is
+restored (or the timeout elapses):
+
+```tsx
+const [ready, setReady] = useState(false)
+useEffect(() => { onelo.features.ready(1500).then(() => setReady(true)) }, [])
+if (!ready) return <FeatureButtonSkeleton />   // pending, NOT hidden
+const feat = onelo.features.feature('$NAME')
+if (!feat.isEnabled) return null               // NOW this is a real answer
+```
+
+This does not apply to server-side route handlers / Express routes below —
+those run per-request, after the session/user id is already resolved from the
+request, so there is no first-paint window to guard.
+
 ### Choosing the right check
 
 Default to **`isEnabled`** for "show this content or don't" gates. It

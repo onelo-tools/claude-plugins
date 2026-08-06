@@ -7,7 +7,7 @@ snippet.
 
 ## install
 <!-- onelo:snippet sdk=auth lang=electron field=install -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```ts
 npm install github:onelo-tools/onelo-electron#semver:*
 ```
@@ -15,7 +15,7 @@ npm install github:onelo-tools/onelo-electron#semver:*
 
 ## init
 <!-- onelo:snippet sdk=auth lang=electron field=init -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```ts
 import { Onelo } from '@onelo/electron'
 import { app, BrowserWindow } from 'electron'
@@ -46,7 +46,7 @@ const auth = onelo.auth // shorthand — the SAME instance the consent gate sign
 
 ## usage
 <!-- onelo:snippet sdk=auth lang=electron field=usage -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```ts
 // 3. Auto-show auth on app launch — no button needed.
 //

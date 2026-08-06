@@ -1,7 +1,6 @@
 ---
 name: onelo-monitor
-description: Audits and instruments Onelo Monitor SDK usage (error and performance tracking). Use when a developer adds Onelo Monitor to an app, or wants existing monitor instrumentation reviewed for anti-patterns — error-only features that don't auto-resolve, failure-mode event names, event() calls that should be track(), or missing facet meta. Currently covers Swift (iOS/macOS), Python (backends), and JavaScript/TypeScript (web & SSR/Node); other SDKs are deferred.
-disable-model-invocation: true
+description: Audits and instruments Onelo Monitor SDK usage (error and performance tracking) across every user-facing feature of an app. Use whenever a developer adds, pastes, wires or mentions Onelo Monitor, asks to track errors/crashes/performance/feature health with Onelo, asks which parts of their app should be monitored, or wants existing monitor instrumentation reviewed for anti-patterns — error-only features that don't auto-resolve, operations that resolve empty-handed but log ok:true, failure-mode event names, event() calls that should be track(), or missing facet meta. Also use after inserting the Monitor snippet, to make sure coverage is product-complete rather than one demo call. Covers Swift (iOS/macOS), Python, JavaScript/TypeScript, Node, PHP, Electron, React Native, Android/Kotlin and Flutter.
 allowed-tools: Bash Glob Grep Read Edit Task
 ---
 
@@ -27,7 +26,7 @@ go. Do NOT jump to detection or instrumentation before Phase 0 is done.
 - [ ] 0c · Smoke-test: app still builds/imports after install/update (swift build / python -c "import <entry>")
 - [ ] 1  · Detect language(s) + monitor.init + crash capture → report the map
 - [ ] 2  · Choose mode (audit / coverage scan / instrument)
-- [ ] 3/4 · Build proposal → WAIT for approval
+- [ ] 3/4 · List every USER-FACING feature FIRST (incl. SDK-presented flows), then build the proposal — each feature ends covered / gap / skipped+reason → WAIT for approval
 - [ ] 5  · Apply approved changes
 - [ ] 6  · Independent verify (subagent)
 - [ ] 7  · Report
@@ -56,11 +55,15 @@ One file per platform. Open ONLY the one you detected.
 - Swift — iOS & macOS: [references/swift.md](references/swift.md)
 - Python — backends: [references/python.md](references/python.md)
 - JavaScript / TypeScript — web & SSR/Node (`@onelo/js`): [references/js.md](references/js.md)
+- Electron, React Native, Android/Kotlin, Flutter: [references/other-platforms.md](references/other-platforms.md)
 - SDK install / version / init (Swift, Python & JS): [references/sdk-setup.md](references/sdk-setup.md)
 
-Electron, React Native, Kotlin and Flutter are **not covered yet** — their
-Monitor surface may be outdated. If the only SDK present is one of those, say so
-and stop (see "Unsupported SDKs"). Never guess their API from another language.
+**Every platform in the snippet table above is supported.** Node and PHP have no
+per-language reference file yet — for those, use the audit rules below (they are
+language-agnostic) plus the platform's snippet file for exact syntax, and say so
+in your report. Never guess an API from another language: if a call shape isn't in
+the platform's snippet file or its reference file, read
+`packages/onelo-<sdk>/` instead of improvising.
 
 ---
 
@@ -71,19 +74,21 @@ event carries a `featureName`, `ok` (true/false), a `source` (event / track /
 …), an optional `durationMs`, and `meta`. The dashboard aggregates per
 `featureName` over a time window and derives status from the error rate.
 
-Two facts drive every audit rule below:
+Three facts drive every audit rule below:
 
-1. **Recovery needs success traffic.** Auto-resolve fires only when the error
-   rate FALLS below threshold while events are still arriving (`check_alerts`
-   skips a feature with no events in the window). A feature that emits ONLY
-   `ok:false` never produces the `ok:true` events that would lower the rate —
-   and once the error stops it goes silent, so the auto-resolve check never runs.
-   Such an incident **won't clear itself**; it has to be resolved manually
-   (reopen-on-regression makes closing it safe). This is the #1 cause of stale
-   incidents.
-2. **The name is permanent UI.** The `featureName` shows in Feature Health on
-   success AND failure. A name describing the failure (`backend_error`) reads as
-   a standing alarm even when everything is healthy.
+1. **Recovery needs success traffic.** Auto-resolve fires only when the error rate
+   FALLS below threshold while events are still arriving (`check_alerts` skips a
+   feature with no events in the window). A feature emitting ONLY `ok:false` never
+   produces the `ok:true` events that would lower the rate, and goes silent once
+   the error stops — so the incident **won't clear itself** and must be resolved
+   manually. The #1 cause of stale incidents.
+2. **The name is permanent UI.** `featureName` shows in Feature Health on success
+   AND failure, so a name describing the failure (`backend_error`) reads as a
+   standing alarm even when everything is healthy.
+3. **The dashboard believes what you send.** Nothing infers failure — an operation
+   only counts as failed if you say so. A feature that isn't instrumented is
+   absent, and one instrumented wrongly is worse: it asserts health it never
+   checked (Rule A2). Green must be earned.
 
 ---
 
@@ -91,7 +96,10 @@ Two facts drive every audit rule below:
 
 These describe the data model and dashboard, not syntax, so they hold for every
 SDK. Per-language signals, grep patterns and fix syntax live in the reference
-file. Apply in order; severity A → G.
+file. Apply in order; severity A → A2 → B → … → G. (A2 shares Rule A's ⛔ tier —
+both make the dashboard lie — and is applied immediately after A. It is numbered
+A2 rather than inserted as a new "B" so the existing rule letters, which the
+reference files cite, stay stable.)
 
 ### Rule A — Error-only feature ⛔ (highest priority)
 **Signal:** every call site for the feature passes `ok:false` (or it is a
@@ -103,6 +111,32 @@ must be resolved manually (so these pile up open).
 that wraps the real operation, so the SAME feature reports both ok and error. If
 a success path genuinely cannot exist (e.g. a pure crash signal), flag it
 `resolve-manually` — never leave it silently.
+
+### Rule A2 — Resolved ≠ succeeded (false green) ⛔
+**Signal:** a `track()` whose callback can finish WITHOUT doing the thing — it
+returns `nil` / `null` / `None`, an empty list, zero rows, `false`, or a
+"user cancelled" sentinel — and nothing inside the callback raises.
+**Why:** `track()` sets `ok:false` ONLY when the callback throws. An operation
+that returns empty-handed is recorded as a **success**, so a wholly broken feature
+shows 100% healthy and no incident ever opens. This is worse than no
+instrumentation, because the dashboard now actively asserts the feature works.
+**Real case:** `loadAuthView()` resolves `null` both when the user dismisses the
+sheet AND when the embed never paints — a sign-in that never rendered logged
+`ok:true`.
+**Fix:** decide inside the callback and **raise/throw there**, then handle it
+outside the `track()` — so the ONE feature carries both outcomes:
+```
+track("sign_in") {
+  let session = try await loadAuthView()      // resolves nil on BOTH paths
+  guard let session else { throw AuthFailed.noSession }   // ← raise INSIDE
+  return session
+}
+```
+Let only genuine breakage throw where you can tell it from a user-cancel (a
+cancel flag, a timeout, "did the view ever appear"); if you can't, throw anyway
+and carry the ambiguity in `meta` — a false green costs more than a noisy rate.
+**NEVER** emit a second `event("sign_in_failed", ok:false)` for the failure path —
+that is Rules A+B in one move and splits one feature into two dashboard rows.
 
 ### Rule B — Failure-mode name ⚠
 **Signal:** the name contains/ends with `_error`, `_failed`, `_failure`,
@@ -151,22 +185,27 @@ FEATURE, not the outcome (`track()` records ok/error/duration itself).
 ## Coverage model (what "quality monitoring" means)
 
 The goal is to catch a feature **both when it works and when it doesn't**, across
-every thread. Two different bars:
+every thread — and to know which features you've made that claim about. Three bars:
+
+- **Features — be EXHAUSTIVE in the INVENTORY.** Enumerate every user-facing
+  feature before deciding what to instrument (Phase 4 step 1). You may then skip
+  many of them, but each skip is explicit and reasoned. Silence about a feature
+  is the failure mode this whole skill exists to prevent.
 
 - **Errors & exceptions — be COMPREHENSIVE.** Every failure path must reach
-  Onelo; a silent uncaught exception is the worst outcome. That means: (1) global
-  crash capture wired (Swift: automatic at init; Python: `install_excepthook=True`
-  + a framework integration); (2) background threads / tasks covered — their
-  exceptions vanish if nothing catches them; (3) any `catch` / `except` that
-  swallows an error gets a `capture()` (then re-raises if it used to propagate).
+  Onelo. That means: (1) global crash capture wired (Swift: auto at init; Python:
+  `install_excepthook=True` + a framework integration); (2) background threads /
+  tasks covered — their exceptions vanish if nothing catches them; (3) any
+  `catch` / `except` that swallows an error gets a `capture()` (then re-raises if
+  it used to propagate); (4) operations that fail by returning EMPTY rather than
+  throwing — see Rule A2.
 - **Operations (success path) — be SELECTIVE.** Wrap SIGNIFICANT operations in
   `track()` — network, AI/model, export, payment, sync, anything awaited or
-  fallible. `track()` reports ok AND error + duration for that feature, which is
-  exactly "works / doesn't work". Do NOT track trivial UI or high-frequency
-  events (Rule F).
+  fallible. Do NOT track trivial UI or high-frequency events (Rule F).
 
-Comprehensive on failures, selective on successes — that combination is what makes
-the dashboard trustworthy: green means green, and nothing fails in silence.
+Exhaustive in the inventory, comprehensive on failures, selective on successes —
+that is what makes the dashboard trustworthy: green means green, nothing fails in
+silence, and every gap is one you chose.
 
 ---
 
@@ -178,22 +217,17 @@ Before auditing or instrumenting:
    `from onelo import ... monitor`; JS: `import { Onelo } from '@onelo/js'` +
    `new Onelo(...)`.) If NOT present, install it first —
    [references/sdk-setup.md](references/sdk-setup.md).
-2. **Is it current?** The snippets this skill inserts may use newer APIs.
-   Notably, Python `monitor.track()` (context manager / decorator) needs
-   **onelo-python ≥ 0.5.0a23** — older installs lack it, so the inserted code
-   would break. **Find the latest:** `git ls-remote --tags https://github.com/onelo-tools/onelo-python`
-   (or `…/onelo-swift`) → highest `*-staging` tag (e.g. `v0.5.0a24-staging`).
-   Compare to the installed version (`pip show onelo` / grep `Package.resolved`).
-   If installed < latest **OR you can't tell → UPDATE now** (sdk-setup.md) before
-   proceeding. Do not instrument a stale SDK.
-3. **Smoke-test after ANY install/update.** An SDK upgrade can REMOVE or tighten
-   things existing code relies on (not just add APIs) — that's exactly how a
-   removed `discovery_key` and a blank `feature_environment` crash-looped Turingo's
-   backend. Verify the app still builds/imports BEFORE instrumenting:
-   - Swift: `swift build` (or an Xcode build) must succeed.
-   - Python: import the app entry, e.g. `python -c "import main"` (your FastAPI
-     `module:app`) must not raise.
-   If it FAILS, the update broke EXISTING code → fix that first; do not instrument.
+2. **Is it current?** The snippets this skill inserts may use newer APIs — e.g.
+   Python `monitor.track()` needs **onelo-python ≥ 0.5.0a23**, older installs lack
+   it and the inserted code breaks. Find the latest with
+   `git ls-remote --tags https://github.com/onelo-tools/onelo-<sdk>` → highest
+   `*-staging` tag; compare to the installed version. If behind **or you can't
+   tell → UPDATE now** (sdk-setup.md). Do not instrument a stale SDK.
+3. **Smoke-test after ANY install/update.** An upgrade can REMOVE or tighten
+   things existing code relies on — that's how a removed `discovery_key` and a
+   blank `feature_environment` crash-looped Turingo's backend. Verify the app
+   still builds/imports first (Swift: `swift build`; Python: `python -c "import
+   main"`). If it FAILS, the update broke EXISTING code → fix that first.
 4. Only then proceed. Never instrument against an absent, stale, or non-starting SDK.
 
 > Note: "installed & current" (Phase 0) is separate from "Monitor initialised"
@@ -202,21 +236,17 @@ Before auditing or instrumenting:
 
 ---
 
-## Keys — which one, and where
-### Which key, and where it comes from
+## Keys — which one, and where it comes from
 
 | Side | Key | Where |
 |---|---|---|
 | Client / frontend | **publishable** `onelo_pk_live_…` — a public app identifier, safe to ship | dashboard → **SDK** tab, top |
 | Server / backend | **secret** `onelo_sk_live_…` — a trusted credential | dashboard → **API Keys → Secret keys** |
 
-A backend authenticates as the server, not as an app, so it uses the secret key
-— never a publishable one. Read it from the environment (`ONELO_SECRET_KEY`);
-never hard-code it and never let it reach client code.
-
-Ask for the key you actually need **before** proposing changes. Discovering
-mid-insert that a backend needs a second, differently-scoped credential wastes
-the developer's turn.
+A backend authenticates as the server, not as an app, so it uses the secret key —
+never a publishable one. Read it from the environment (`ONELO_SECRET_KEY`); never
+hard-code it and never let it reach client code. Ask for the key you need
+**before** proposing changes.
 
 ---
 
@@ -232,8 +262,8 @@ Survey the ground before touching anything:
 3. **Verify crash capture is wired** (Swift: auto at init; Python:
    `install_excepthook=True` + integration). Un-wired global capture = unhandled
    errors are invisible — flag it before anything else.
-4. Load ONLY the matching reference file(s). If the only SDK present is an
-   unsupported one, stop per "Unsupported SDKs".
+4. Load ONLY the matching reference file(s). If a detected platform has no
+   reference file (Node, PHP), do NOT stop — proceed per "Platform coverage".
 
 ## Phase 2 — Choose mode
 
@@ -255,7 +285,10 @@ single thing they want. "Both [1]+[2]" is common for a first pass.
    every `featureName`. If the developer supplies app context, optionally enrich
    with the live registry + per-feature error rate via
    `GET {apiBase}/api/monitor/features?app_id=…` — a code-only audit still works.
-2. Apply Rules A–G. Build a plan grouped by rule, most severe first (A → G). Treat
+2. Apply Rules A–G (including A2 — for every existing `track()`, ask "can this
+   callback return empty-handed without throwing?"; grep alone won't show it, you
+   must read the callback body). Build a plan grouped by rule, most severe first
+   (A → A2 → B → … → G). Treat
    the plan as a verifiable intermediate output the developer signs off on before
    any edit.
 3. Show the proposal table (template below): id, `file:line`, current, proposed,
@@ -270,13 +303,16 @@ Audit — {N} features, {M} findings (most severe first)
 
 ⛔ ERROR-ONLY · won't auto-resolve, needs manual ({k})
   #1  backend_error          Backend.swift:88   only ok:false   → make track() / resolve-manually
+⛔ FALSE GREEN · resolves empty-handed, logs ok:true ({k})
+  #2  sign_in                AuthView.swift:24  nil session not thrown → guard + throw INSIDE the callback
 ⚠ FAILURE-MODE NAME ({k})
-  #2  customer_portal_open_failed  Portal.swift:33   → customer_portal_open (ok:false)
+  #3  customer_portal_open_failed  Portal.swift:33   → customer_portal_open (ok:false)
 ↻ event() → track() ({k})
-  #3  settings_model_post     Settings.swift:201    → wrap the POST in track()
+  #4  settings_model_post     Settings.swift:201    → wrap the POST in track()
 ◇ MISSING FACET META ({k})
-  #4  stt_transcribe          Pipeline.swift:55     → add meta["model"]
+  #5  stt_transcribe          Pipeline.swift:55     → add meta["model"]
 ✓ {x} features look good
+⊘ {s} deliberately skipped — see the skip list in the Phase 7 report
 ```
 
 ## Phase 4 — Coverage scan (mode 2)
@@ -284,7 +320,29 @@ Audit — {N} features, {M} findings (most severe first)
 Find what SHOULD be monitored but isn't — the reconnaissance pass. Be thorough;
 coverage is the whole point of this mode.
 
-1. Run the reference file's **coverage patterns** to enumerate, per language:
+1. **Enumerate USER-FACING features FIRST — before any grep.** Greps are
+   code-shaped: they find `async` / `catch` / fire-and-forget. A whole class of
+   features has none of those signals (a blocking, SDK-presented consent gate has
+   no local `catch` at all) and falls straight through the net — that is exactly
+   how a real integration covered 5 of 13 features while every grep came back
+   clean. Build the product-shaped list by READING the app:
+   - every **UI entry point** — button, menu item, form submit, shortcut,
+     drag-drop, context menu, deep link;
+   - every **route / screen / view** the user can reach;
+   - everything **crossing a boundary** — network, disk, DB, clipboard, file
+     picker, camera, notifications, IPC, third-party SDK;
+   - **startup and teardown** — first launch, restore/load of the user's data,
+     migration, sign-out, delete, quit;
+   - **the flows the Onelo SDK itself presents** — sign-in/sign-up, store and
+     checkout, customer portal, consent gate, feedback form. "The SDK handles it"
+     is **not** a reason to leave these unmeasured: they *render* via the SDK but
+     *fail inside the developer's app* — a bad `apiUrl`, a blocked origin, a
+     webview that never paints. Onelo cannot see that from its side; only an event
+     from the app can. These are also the likeliest false greens (Rule A2).
+
+   Carry this list through the whole phase. Each entry ends in exactly one state —
+   **covered**, **gap**, or **skipped + reason**. Never looked at = gap, not skip.
+2. Run the reference file's **coverage patterns** to enumerate, per language:
    - **operations** worth a `track()` — async/awaited funcs, network/HTTP, DB,
      disk, subprocess, AI/model calls;
    - **error sites** — every `catch` / `except`, `try?` / `try!`, `throw` /
@@ -292,16 +350,21 @@ coverage is the whole point of this mode.
    - **background threads / tasks** where an exception would vanish (`Task {}`,
      `DispatchQueue.async`, `threading.Thread`, `asyncio.create_task`, executors,
      Celery tasks).
-2. Drop any site already instrumented (a `monitor.` call within a few lines).
-3. Classify each remaining site (operation → track; swallowing catch → capture;
+   Merge these hits INTO the step-1 list — they add sites the product list
+   missed, they do not replace it.
+3. Drop any site already instrumented (a `monitor.` call within a few lines).
+4. Classify each remaining site (operation → track; swallowing catch → capture;
    uncovered thread/task → wrap or ensure global capture) and assign a snake_case
-   name (Rules B + G) + facet meta (Rule D).
-4. Show the coverage proposal (template below), grouped by kind — errors and
+   name (Rules B + G) + facet meta (Rule D). Anything you are deliberately NOT
+   instrumenting goes in the **skipped** list with a one-line reason — never drop
+   it silently, or it becomes indistinguishable from something you never saw.
+5. Show the coverage proposal (template below), grouped by kind — errors and
    threads FIRST (they are the silent-failure risk). **Wait for approval** (same
    commands as Phase 3).
 
 ```
-Coverage — {covered}/{total} significant sites instrumented
+Coverage — {f} user-facing features: {covered} covered · {gaps} gaps · {skipped} skipped
+            ({covered_sites}/{total_sites} code sites instrumented)
 
 🧵 UNCOVERED THREADS / TASKS · errors vanish here ({k})
   #1  Task {} in SyncEngine.swift:40   throwing body, no capture  → wrap in track("sync")
@@ -309,8 +372,19 @@ Coverage — {covered}/{total} significant sites instrumented
   #2  catch in Upload.swift:88         error ignored              → capture(error, "upload")
 ⏱ UNTRACKED OPERATIONS ({k})
   #3  func fetchProfile() async throws Api.swift:21               → track("fetch_profile")
-✓ {x} operations already covered
+🚪 UNMEASURED USER-FACING FLOWS ({k})
+  #4  consent gate            App.tsx:61    SDK-presented, blocking, no local catch → track("consent_gate")
+  #5  notes load on launch    Store.ts:14   silent empty list on failure            → track("notes_load") + Rule A2
+✓ COVERED ({x})
+  notes_save · checkout · pdf_export
+⊘ DELIBERATELY SKIPPED ({s}) — each needs a reason
+  theme toggle       Rule F — no outcome, fires per click, nothing can fail
+  scroll position    Rule F — high-frequency, restore failure is invisible to the user
 ```
+
+The three lists must account for **every** entry from step 1. If the numbers
+don't add up (`covered + gaps + skipped ≠ f`), you have entries you never
+classified — go back to step 1 rather than shipping the table.
 
 ## Phase 5 — Instrument & apply
 
@@ -342,54 +416,92 @@ Emit a pass/fail line per item. Any fail → fix it and re-check before Stage 2.
 ### Stage 2 — Independent subagent (fresh eyes — ALWAYS)
 Dispatch a subagent (via `Task`) that has NOT seen the plan, the proposal, or
 which sites were just edited — so it cannot rubber-stamp and won't anchor on the
-first scan's grep patterns. Its only job: find fallible operations / error paths /
-background tasks NOT covered by `onelo.monitor`. Exact prompt + structured output:
+first scan's grep patterns. Its job: find fallible operations, error paths,
+background tasks, **unmeasured user-facing features and false greens** not covered
+by `onelo.monitor`. Exact prompt + output:
 [references/verification.md](references/verification.md).
-- **Small scope:** one subagent over the changed area.
-- **Large scope** (e.g. a whole backend): fan out one subagent per module from the
-  Phase 1 map; merge + dedup their gap lists.
-Run it **once** (no loop). Report whatever gaps it returns as REMAINING gaps —
-never silently fix them under the prior approval.
+- **Small scope:** one subagent over the changed area. **Large scope** (a whole
+  backend): one per module from the Phase 1 map; merge + dedup the gap lists.
+Run it **once** (no loop). Report whatever it returns as REMAINING gaps — never
+silently fix them under the prior approval.
 
 Coverage numbers in the report come from THIS pass, not from self-report.
 
 ## Phase 7 — Report
 
 ```
-✓ {applied} change(s) applied · {skipped} skipped
-📊 Coverage (verified): {covered}/{total} operations + {e}/{E} error paths instrumented
+✓ {applied} change(s) applied
+📊 Coverage (verified): {covered}/{f} user-facing features · {covered_sites}/{total_sites} operations · {e}/{E} error paths
 ⚠ {k} error-only features need a PRODUCT decision (Rule A) — not auto-fixed
+⛔ {a2} features may log a FALSE GREEN (Rule A2) — listed below
 🧵 {t} background threads/tasks still uncovered — errors there are invisible
 🔎 {g} gaps found by independent verification — listed below for you to action
+
+⊘ DELIBERATELY SKIPPED ({s}) — nothing here is an oversight:
+  | Feature / site | Why skipped |
+  |---|---|
+  | theme toggle   | Rule F — no outcome, nothing can fail |
+  | {…}            | {reason} |
+
 → After shipping: archive any renamed old names in Features → Registry
 ```
 
-Never report success while a Rule-A finding, a swallowed error, an uncovered
-thread, or an independent-verification gap is silently unaddressed — list them.
+The skip table is **mandatory**, even when empty (`⊘ none`). Without it, a feature
+you consciously excluded and one you never looked at read identically — which is
+precisely how partial coverage passes for complete. Note here too if a detected
+platform had no reference file: its coverage number is a floor, not a ceiling.
+
+Never report success while a Rule-A or Rule-A2 finding, a swallowed error, an
+uncovered thread, an unmeasured user-facing flow, or an independent-verification
+gap is silently unaddressed — list them.
 
 ---
 
 ## Naming convention (canonical)
 
-snake_case `{object}_{verb}`. Object = what the user acts on (`checkout`,
-`pdf_export`, `ai_response`). For `track()` name the FEATURE, not the outcome. The
-past-tense `_verb` suffix is for instantaneous events only (`tab_viewed`,
-`plan_selected`).
-
+snake_case `{object}_{verb}`; object = what the user acts on (`checkout`,
+`pdf_export`, `ai_response`). For `track()` name the FEATURE, not the outcome;
+the past-tense suffix is for instantaneous events only (`tab_viewed`).
 **PITFALL — check-style names:** name the check, not its failure mode:
-`permission_check` (ok:false, error:"denied"), NOT `permission_denied`. A
-failure-mode name reads as a permanent alert in Feature Health even on success.
+`permission_check` (ok:false, error:"denied"), NOT `permission_denied` — a
+failure-mode name reads as a permanent alert even on success.
 
 ## What NOT to instrument
 
-Mouse move / hover / scroll; every keystroke (track the submit instead); internal
-UI toggles with no outcome; anything faster than ~1×/second/user; init /
-persistence / background work with no user-facing outcome; PII in meta.
+**The test is not "is this background work?" — it is "would a FAILURE here be
+visible to the user?"** If yes, instrument it, however quiet or infrastructural it
+looks. Loading a user's saved data at startup is "background persistence" by every
+code-shaped definition, and it is also the highest-value event in the app: when it
+fails silently the user sees an empty screen and concludes their work is gone.
+Same for a background sync, a token refresh, a migration, an autosave — nobody
+clicked them, and each ruins the user's day when it breaks. Silent data loss is
+never out of scope.
 
-## Unsupported SDKs (deferred)
+Genuinely skip only:
+- **High-frequency signals** — mouse move / hover / scroll, every keystroke (track
+  the submit instead), anything faster than ~1×/second/user (Rule F).
+- **Things that cannot fail** — a pure in-memory UI toggle, a local theme switch:
+  no boundary crossed, no failure mode, nothing to report.
+- **Work whose failure the user can never perceive** — a cache warm that silently
+  falls through to the real fetch, a metrics ping. If a failure would degrade or
+  change ANYTHING the user sees, it does not belong here.
+- **PII in meta** — never, regardless of value.
 
-Electron, React Native, Kotlin and Flutter are not covered in this version —
-their Monitor surface may be outdated. If one of those is the only SDK present,
-tell the developer it isn't supported yet and stop. Do not guess the API from
-Swift, Python or JS. (Swift, Python and JavaScript/TypeScript ARE supported — see
-the reference files above.)
+Everything you skip goes in the Phase 4 / Phase 7 skip list with its reason.
+
+## Platform coverage
+
+All nine platforms in the snippet table are supported — Swift, Python, JS/TS,
+Node, PHP, Electron, React Native, Android/Kotlin and Flutter. Depth differs:
+
+| Depth | Platforms | What you have |
+|---|---|---|
+| Full reference file | Swift, Python, JS/TS | detect signals, primitives, grep + coverage patterns, insertion rules |
+| Shared reference file | Electron, React Native, Android/Kotlin, Flutter | [references/other-platforms.md](references/other-platforms.md) — same sections, condensed |
+| Snippet only | Node, PHP | the snippet file + the language-agnostic rules A–G |
+
+For a snippet-only platform run the phases normally (the rules are
+language-agnostic), take exact syntax from the snippet file, and note in Phase 7
+that no per-language grep set exists yet — the coverage number is a floor, not a
+ceiling. Never stop because a platform lacks a reference file; never guess an API
+shape — read `packages/onelo-<sdk>/` if the snippet doesn't show it.

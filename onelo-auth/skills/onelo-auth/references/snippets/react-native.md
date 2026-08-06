@@ -7,7 +7,7 @@ snippet.
 
 ## install
 <!-- onelo:snippet sdk=auth lang=reactnative field=install -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```ts
 npm install github:onelo-tools/onelo-react-native react-native-keychain react-native-webview react-native-get-random-values
 ```
@@ -15,7 +15,7 @@ npm install github:onelo-tools/onelo-react-native react-native-keychain react-na
 
 ## init
 <!-- onelo:snippet sdk=auth lang=reactnative field=init -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```ts
 // PKCE needs a cryptographically-secure RNG. React Native has no built-in Web
 // Crypto, so import this polyfill as the FIRST line of your app ENTRY (index.js),
@@ -42,7 +42,7 @@ const onelo = new Onelo({
 
 ## usage
 <!-- onelo:snippet sdk=auth lang=reactnative field=usage -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```ts
 import { OneloAuthGate, ConsentGateModal } from '@onelo/react-native'
 

@@ -78,6 +78,27 @@ For StatefulWidget, instrument the `_XState` class's `build()` method, use the w
 > a top-level `final onelo = Onelo(...)` in `main.dart`, or surfaced through
 > Provider/Riverpod. See Phase 6 of SKILL.md for the init pattern.
 
+### Avoid the first-paint flicker
+
+`identify(userId)` (or Onelo Auth's own session resolve) settles per-user
+targeting over the **network**. A `feature(...)` read in `build()` right
+after launch, before that resolve settles, can be for the wrong user (or a
+default) for a moment. If the widget treats "not yet known" the same as
+hidden (the common mistake: `if (!feat.isEnabled) return const SizedBox()`
+with no separate loading state), a real feature flashes then disappears then
+reappears once the real state arrives — this reads as a bug in Onelo's cache;
+it isn't, the widget just asked before the SDK had an answer.
+
+Await `ready()` before your first read:
+
+```dart
+await onelo.features.ready();
+```
+
+If you can't block first paint (e.g. inside `build()`), track a separate
+loading flag (`FutureBuilder`/`ready` state) and render a skeleton — never
+fold "unknown yet" into the same branch as hidden.
+
 ### Choosing the right check
 
 Default to **`isEnabled`** for "show this content or don't" gates. It

@@ -17,7 +17,7 @@ The hosted waitlist page. Shareable as a plain link, and also the `src` the
 iframes below point at.
 
 <!-- onelo:snippet sdk=waitlist lang=web field=init -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```html
 <!-- Hosted waitlist page — shareable as-is, or use as the iframe src -->
 https://onelo.tools/waitlist/YOUR_WAITLIST_SLUG
@@ -35,7 +35,7 @@ Waitlist mode (see `references/waitlist-modes.md`).
 - **In-container** — fills its slot; keeps everything inside your page's column.
 
 <!-- onelo:snippet sdk=waitlist lang=web field=usage -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```html
 <!-- A) In-container: fills the slot you put it in -->
 <iframe

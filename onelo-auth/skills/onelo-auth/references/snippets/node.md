@@ -7,7 +7,7 @@ snippet.
 
 ## install
 <!-- onelo:snippet sdk=auth lang=node field=install -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```ts
 npm install github:onelo-tools/onelo-node
 ```
@@ -15,7 +15,7 @@ npm install github:onelo-tools/onelo-node
 
 ## init
 <!-- onelo:snippet sdk=auth lang=node field=init -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```ts
 import { Onelo } from '@onelo/node'
 import { requireUser } from '@onelo/node/express'
@@ -31,7 +31,7 @@ const onelo = new Onelo({
 
 ## usage
 <!-- onelo:snippet sdk=auth lang=node field=usage -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```ts
 // The frontend sends the user's ACCESS TOKEN (returned by the Onelo SDK after
 // sign-in — NOT your secret key) as: Authorization: Bearer <token>.

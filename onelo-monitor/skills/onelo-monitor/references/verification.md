@@ -22,18 +22,36 @@ it anchoring on the first scan's grep patterns.
 > 3. **Background threads / tasks** whose exception would vanish (`Task {}`,
 >    `DispatchQueue.async`, `threading.Thread`, `asyncio.create_task`, executors,
 >    Celery/RQ tasks).
+> 4. **User-facing features with no monitor event at all.** Do this WITHOUT grep:
+>    list every UI entry point (button, menu item, form submit, shortcut), every
+>    route/screen, startup/teardown paths including loading the user's saved data,
+>    and every flow the Onelo SDK presents (sign-in, store, customer portal,
+>    consent gate, feedback). A blocking SDK-presented gate has no local `catch`
+>    and no `async` in the caller, so no grep will ever surface it. "The SDK
+>    handles it" does NOT make it covered — it renders via the SDK but fails
+>    inside this app.
+> 5. **False greens** — a `track()` whose callback can return `null` / `None` /
+>    `[]` / `false` / a cancel sentinel without throwing, or that contains
+>    `try?` / `except: pass`. It records ok:true on a broken run. Read the
+>    callback body; this is invisible to grep.
 >
 > Search by MULTIPLE angles — by imported library, by function signature
-> (`async` / `throws`), and by walking files in the directory — not a single grep.
+> (`async` / `throws`), by walking files in the directory, AND by reading the
+> UI layer for what a user can actually do — not a single grep.
 > A site counts as covered only if a monitor call clearly wraps or reports it.
 > Return JSON only, no prose:
 > ```json
-> { "gaps": [ { "file": "...", "line": 0, "kind": "operation|error|thread",
->   "symbol": "...", "why": "one line" } ], "covered": 0, "total": 0 }
+> { "gaps": [ { "file": "...", "line": 0,
+>   "kind": "operation|error|thread|feature|false_green",
+>   "symbol": "...", "why": "one line" } ],
+>   "covered": 0, "total": 0, "features_unmeasured": ["..."] }
 > ```
 
 ## Use the result
 - `gaps == []` → coverage confirmed; put `covered/total` into the Phase 7 report.
+- Anything in `features_unmeasured` that you deliberately excluded belongs in the
+  Phase 7 **skip table with its reason** — not dropped. If you can't state why it
+  was skipped, it was a miss, not a skip.
 - `gaps != []` → list them in the report as REMAINING gaps for the developer to
   action. Do NOT silently fix them under the prior approval — they are a new round
   the developer must see and approve.

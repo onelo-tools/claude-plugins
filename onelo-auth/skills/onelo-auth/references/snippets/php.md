@@ -7,7 +7,7 @@ snippet.
 
 ## install
 <!-- onelo:snippet sdk=auth lang=php field=install -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```php
 # onelo-php installs from GitHub via Composer (not on Packagist).
 # Register the repository once, then require:
@@ -18,7 +18,7 @@ composer require onelo/onelo-php
 
 ## init
 <!-- onelo:snippet sdk=auth lang=php field=init -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```php
 <?php
 use Onelo\Onelo;
@@ -34,7 +34,7 @@ $onelo = new Onelo(
 
 ## usage
 <!-- onelo:snippet sdk=auth lang=php field=usage -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```php
 // ── Laravel ── bind $onelo in a service provider, then guard a route.
 // The frontend sends the user's ACCESS TOKEN as: Authorization: Bearer <token>.

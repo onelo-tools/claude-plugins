@@ -7,7 +7,7 @@ another platform's snippet.
 
 ## install
 <!-- onelo:snippet sdk=customer-portal lang=flutter field=install -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```dart
 # pubspec.yaml:
 dependencies:
@@ -20,7 +20,7 @@ dependencies:
 
 ## init
 <!-- onelo:snippet sdk=customer-portal lang=flutter field=init -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```dart
 import 'package:onelo/onelo.dart';
 
@@ -34,7 +34,7 @@ final onelo = Onelo(
 
 ## usage
 <!-- onelo:snippet sdk=customer-portal lang=flutter field=usage -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```dart
 // Push OneloCustomerPortalView to present the hosted portal IN-APP (WebView).
 // The widget fetches the portal URL, renders the page, and can be CLOSED at any

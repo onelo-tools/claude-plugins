@@ -4,8 +4,14 @@
 
 ```
 /plugin marketplace add onelo-tools/claude-plugins
+/plugin marketplace update onelo-tools      # already added it before? do this or the install 404s
 /plugin install onelo@onelo-tools
+/reload-plugins
 ```
+
+`marketplace add` does nothing if you already have the marketplace, so an old
+catalogue sticks around and the install fails with "not found". The refresh is
+the fix.
 
 That's it. This is a *bundle*: it ships no skills of its own and declares every
 Onelo plugin as a dependency, so installing it pulls all of them in. Claude Code

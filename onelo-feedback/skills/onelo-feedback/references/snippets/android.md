@@ -7,7 +7,7 @@ platform's snippet.
 
 ## install
 <!-- onelo:snippet sdk=feedback lang=android field=install -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```kotlin
 // build.gradle.kts (app/module)
 // mavenCentral() is standard in Android projects — add it to settings.gradle.kts
@@ -18,7 +18,7 @@ implementation("tools.onelo:onelo-android:1.+")
 
 ## init
 <!-- onelo:snippet sdk=feedback lang=android field=init -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```kotlin
 import com.onelo.android.Onelo
 import com.onelo.android.OneloConfig
@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
 
 ## usage
 <!-- onelo:snippet sdk=feedback lang=android field=usage -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```kotlin
 // Anonymous — best for public-facing apps; the report isn't tied to a person
 onelo.feedback.open(this)

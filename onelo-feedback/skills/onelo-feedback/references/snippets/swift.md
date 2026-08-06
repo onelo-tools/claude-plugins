@@ -7,7 +7,7 @@ platform's snippet.
 
 ## install
 <!-- onelo:snippet sdk=feedback lang=swift field=install -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```swift
 // Xcode → File → Add Package Dependencies:
 // https://github.com/onelo-tools/onelo-swift
@@ -16,7 +16,7 @@ platform's snippet.
 
 ## init
 <!-- onelo:snippet sdk=feedback lang=swift field=init -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```swift
 import OneloSwift
 
@@ -30,7 +30,7 @@ let onelo = Onelo(
 
 ## usage
 <!-- onelo:snippet sdk=feedback lang=swift field=usage -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```swift
 // SwiftUI — attach .feedbackSheet ONCE to your root/content view. This is
 // REQUIRED: open() only sets isPresented; without the modifier NOTHING shows.

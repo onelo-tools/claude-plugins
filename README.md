@@ -5,7 +5,9 @@ Add it once and get every plugin below; updates arrive on `/plugin marketplace u
 
 ```bash
 /plugin marketplace add onelo-tools/claude-plugins
+/plugin marketplace update onelo-tools      # already added it before? do this or the install 404s
 /plugin install onelo@onelo-tools
+/reload-plugins
 ```
 
 `onelo` is a **bundle**: it ships no skills of its own and declares every plugin

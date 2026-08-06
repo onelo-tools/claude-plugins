@@ -116,3 +116,5 @@ copying syntax.
 - `event("permission_denied", .init(ok: false))` → `event("permission_check", .init(ok: false, error: "denied"))`  *(Rule B)*
 - `event("export_started"); …; event("export_completed")` → `track("export") { … }`  *(Rule E)*
 - `track("ai_response") { … }` with no meta → add `meta: ["model": "gpt-4"]`  *(Rule D)*
+- `track("sign_in") { await loadAuthView() }` where the call returns `nil` on BOTH cancel and a dead embed → `guard let session else { throw AuthFailed.noSession }` INSIDE the closure  *(Rule A2 — false green)*
+- `try? doWork()` inside a `track()` closure — swallows the throw, so the operation always logs ok:true → use `try` and let it propagate to `track()`  *(Rule A2)*

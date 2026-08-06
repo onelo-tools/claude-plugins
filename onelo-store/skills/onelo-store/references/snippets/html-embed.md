@@ -14,7 +14,7 @@ The hosted store page. Shareable as a plain link, and it is also the `src` the
 iframes below point at.
 
 <!-- onelo:snippet sdk=store lang=web field=init -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```html
 <!-- Hosted store page — shareable as-is, or use as the iframe src -->
 https://onelo.tools/customer/app/YOUR_APP_SLUG
@@ -32,7 +32,7 @@ iframe never gets its own scrollbar.
   inside your page's existing column.
 
 <!-- onelo:snippet sdk=store lang=web field=usage -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```html
 <!-- A) In-container: fills the slot you put it in -->
 <iframe

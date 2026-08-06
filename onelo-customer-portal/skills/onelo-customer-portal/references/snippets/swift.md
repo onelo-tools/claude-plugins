@@ -7,7 +7,7 @@ another platform's snippet.
 
 ## install
 <!-- onelo:snippet sdk=customer-portal lang=swift field=install -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```swift
 // Xcode → File → Add Package Dependencies:
 // https://github.com/onelo-tools/onelo-swift
@@ -16,7 +16,7 @@ another platform's snippet.
 
 ## init
 <!-- onelo:snippet sdk=customer-portal lang=swift field=init -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```swift
 // ────────────────────────────────────────────────────────────────
 // PRECONDITION — Onelo SDK already initialised
@@ -34,7 +34,7 @@ import AuthenticationServices
 
 ## usage
 <!-- onelo:snippet sdk=customer-portal lang=swift field=usage -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```swift
 // ────────────────────────────────────────────────────────────────
 // STEP 1 — Add a "Manage subscription" button anywhere in your UI

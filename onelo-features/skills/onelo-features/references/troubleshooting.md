@@ -5,6 +5,7 @@ the developer you're helping) are debugging unexpected behavior, check these fir
 
 ## Contents
 - Fail-closed default is by design
+- A gated button flashes then disappears then reappears on login / cold start
 - macOS App Attest hang on dev builds
 - Keychain errSecDuplicateItem after rebuilds
 - Hosted-auth WebView opens then disappears
@@ -22,6 +23,25 @@ If you want new gates to render their content while you build them locally, pass
 `featureDefaultStatus: .enabled` (or the language equivalent) in the SDK init,
 gated by your debug flag. Each language reference file shows the exact syntax
 under "Dev-mode default".
+
+## A gated button flashes then disappears then reappears on login / cold start
+
+This looks like a caching bug in Onelo. It usually isn't — the cache is
+per-user (feature status depends on the signed-in identity/plan), so on a
+fresh load or right after login the SDK doesn't yet know WHICH user's cached
+snapshot to restore until `identify()` (or Onelo Auth's own session resolve)
+finishes its network round-trip. If the gated component reads `feature(...)`
+before that settles, and treats "not yet known" the same as `hidden` — the
+almost-universal bug — the button vanishes for the resolve window, then pops
+back in once the real per-user state lands. Users read this as "the button
+disappeared."
+
+Fix: don't read features before `onelo.features.ready(timeoutMs)` resolves
+(or, if you can't block first paint, track a separate loading flag and render
+a skeleton — never fold "unknown yet" into the `hidden` branch). Every SDK
+(JS/React/Electron/React Native, Swift, Android/Kotlin, Flutter) exposes
+`ready()` for exactly this; see "Avoid the first-paint flicker" in the
+matching `*-patterns.md` reference file for the exact call shape.
 
 ## macOS App Attest hang on dev builds
 

@@ -132,3 +132,5 @@ copying syntax.
 - `try: … except: monitor.capture_message("failed", level="error")` → `monitor.capture_exception()` (keeps the stack)
 - error-only `capture_message("backend down", level="error", feature_name="backend_error")` → `with monitor.track("backend_call"):` (emits ok too)  *(Rules A+B)*
 - `with monitor.track("ai_response"):` with no meta → add `meta={"model": "gpt-4"}`  *(Rule D)*
+- `with monitor.track("user_fetch"): row = db.first()` where `row is None` on failure → `raise` inside the block; the block only records an error if something raises  *(Rule A2 — false green)*
+- a `try/except: pass` INSIDE a `track()` block → swallows the exception, so the operation always logs ok:true; capture and re-raise  *(Rule A2)*

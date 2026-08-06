@@ -7,7 +7,7 @@ snippet.
 
 ## install
 <!-- onelo:snippet sdk=auth lang=flutter field=install -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```dart
 # pubspec.yaml:
 dependencies:
@@ -20,7 +20,7 @@ dependencies:
 
 ## init
 <!-- onelo:snippet sdk=auth lang=flutter field=init -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```dart
 import 'package:onelo/onelo.dart';
 
@@ -51,7 +51,7 @@ final onelo = Onelo(
 
 ## usage
 <!-- onelo:snippet sdk=auth lang=flutter field=usage -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```dart
 // Wrap your app — shows hosted sign-in automatically when not signed in
 void main() {

@@ -213,6 +213,28 @@ guard onelo.features.feature("$NAME").isEnabled else { return }
 > `@StateObject`/`@EnvironmentObject` declared in your App entry point.
 > See Phase 6 of SKILL.md for the init pattern.
 
+### Avoid the first-paint flicker
+
+`identify(userId)` (or Onelo Auth's own session resolve) settles per-user
+targeting over the **network**. A `feature(...)` read in a SwiftUI `body` /
+`viewDidLoad` right after launch, before that resolve settles, can be for the
+wrong user (or a default) for a moment. If the call site treats "not yet
+known" the same as `.hidden` (the common mistake: `if feat.isEnabled { ... }`
+with no separate loading state), a real feature flashes then disappears then
+reappears once the real state arrives — this reads as a bug in Onelo's cache;
+it isn't, the view just asked before the SDK had an answer.
+
+Await `ready(timeout:)` before your first read (app launch, or the view's
+`.task {}`):
+
+```swift
+await onelo.features.ready(timeout: 1.5)
+```
+
+If you can't block first paint, track a separate `@State private var ready =
+false` and render a skeleton/`ProgressView` until it flips — never fold
+"unknown yet" into the same branch as `.hidden`.
+
 ### Choosing the right check
 
 Default to **`isEnabled`** for "show this content or don't" gates. It matches

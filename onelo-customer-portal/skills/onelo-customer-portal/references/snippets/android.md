@@ -7,7 +7,7 @@ another platform's snippet.
 
 ## install
 <!-- onelo:snippet sdk=customer-portal lang=android field=install -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```kotlin
 // build.gradle.kts (app/module)
 // mavenCentral() is standard in Android projects — add it to settings.gradle.kts
@@ -18,7 +18,7 @@ implementation("tools.onelo:onelo-android:1.+")
 
 ## init
 <!-- onelo:snippet sdk=customer-portal lang=android field=init -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```kotlin
 import com.onelo.android.Onelo
 import com.onelo.android.OneloConfig
@@ -35,7 +35,7 @@ val onelo = Onelo(
 
 ## usage
 <!-- onelo:snippet sdk=customer-portal lang=android field=usage -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```kotlin
 // 1. Register the launcher in Activity / Fragment onCreate (before any UI):
 val portalLauncher = onelo.customerPortal.registerLauncher(this, auth = onelo.auth) { result ->

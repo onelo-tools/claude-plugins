@@ -7,7 +7,7 @@ snippet.
 
 ## install
 <!-- onelo:snippet sdk=auth lang=python field=install -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```python
 pip install 'onelo[fastapi] @ git+https://github.com/onelo-tools/onelo-python.git'
 ```
@@ -15,7 +15,7 @@ pip install 'onelo[fastapi] @ git+https://github.com/onelo-tools/onelo-python.gi
 
 ## init
 <!-- onelo:snippet sdk=auth lang=python field=init -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```python
 import os
 from fastapi import FastAPI, Depends
@@ -31,7 +31,7 @@ app = FastAPI()
 
 ## usage
 <!-- onelo:snippet sdk=auth lang=python field=usage -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```python
 @app.get("/me")
 async def me(user: OneloUser = Depends(require_user)):

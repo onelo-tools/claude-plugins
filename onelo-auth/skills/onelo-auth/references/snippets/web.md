@@ -7,7 +7,7 @@ snippet.
 
 ## install
 <!-- onelo:snippet sdk=auth lang=npm field=install -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```ts
 npm install github:onelo-tools/onelo-js
 ```
@@ -15,7 +15,7 @@ npm install github:onelo-tools/onelo-js
 
 ## init
 <!-- onelo:snippet sdk=auth lang=npm field=init -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```ts
 import { Onelo } from '@onelo/js'
 
@@ -29,18 +29,23 @@ const onelo = new Onelo({
 
 ## usage
 <!-- onelo:snippet sdk=auth lang=npm field=usage -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```ts
-// Sign in — pick ONE presentation. loadAuthView() auto-routes
-// waitlist / paywall-store automatically when those are enabled for your app.
-
-// A) Embedded (the default): an in-page iframe modal. First add your site's
-//    origin to Allowed Origins in the dashboard (on a test key, localhost
-//    works already).
+// Sign in. This is your app's FIRST screen for a visitor with no session:
+// call it where you would otherwise redirect to /login — NOT from a "Sign in"
+// button. It renders INSIDE your own window (no popup, no extra step) and
+// auto-routes to waitlist / paywall-store when those are enabled for your app.
+//
+// Needs your site's origin in Allowed Origins (dashboard → app → Auth). While
+// the app is not live AND that list is empty, nothing is enforced — localhost
+// just works. The moment you add any origin it becomes exact-match, so add
+// http://localhost:PORT alongside your domain or local dev stops working.
 const session = await onelo.loadAuthView()
 
-// B) Popup: a top-level window, works on any origin — like an OAuth popup.
-//    Nothing to configure.
+// Escape hatch — a top-level popup window instead of the in-page view. Only for
+// origins you genuinely cannot add (a preview host with a rotating hostname, an
+// embedder whose CSP you don't control). Browsers can block popups, so never
+// reach for this just to skip the Allowed Origins step.
 //    const session = await onelo.loadAuthView({ mode: 'popup' })
 
 // Read the current session + react to changes

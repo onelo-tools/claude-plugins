@@ -482,13 +482,19 @@ success without this section.
 
 ## Phase 6.5 — Wire up the SDK
 
-Once instrumentation is approved and applied, walk the developer through wiring
-the SDK: install, per-language init, `declare(...)`, the build hook, identify, and
-what shows up in the dashboard. Full guide (per-language init included):
-[references/sdk-setup.md](references/sdk-setup.md).
+APPLY with the Edit tool, like Phase 5 — "told the developer to add declare()"
+isn't done, the call must be IN the file. Insert the init sample from
+[references/sdk-setup.md](references/sdk-setup.md), wiring `declare(...)` to
+the Phase 5b registry import (not a hand-typed list — goes stale; run 5b
+first if skipped). Confirm in the Phase 6 report declare() is in the file.
+
+⚠️ On CLIENT platforms, a gated component read BEFORE `identify()`'s network
+resolve settles can flash-then-disappear-then-reappear — looks like a caching
+bug, isn't. See "Avoid the first-paint flicker" in each per-language reference
+file, and [references/troubleshooting.md](references/troubleshooting.md).
 
 ## Troubleshooting
 
-Common first-integration pitfalls — fail-closed default, macOS App Attest hang,
-Keychain duplicates, WebView crashes, TCC re-prompts, SwiftUI render loop:
-[references/troubleshooting.md](references/troubleshooting.md).
+Common first-integration pitfalls (fail-closed default, first-paint flicker, App
+Attest hang, Keychain duplicates, WebView crashes, TCC re-prompts, SwiftUI render
+loop): [references/troubleshooting.md](references/troubleshooting.md).

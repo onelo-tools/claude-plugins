@@ -7,7 +7,7 @@ platform's snippet.
 
 ## install
 <!-- onelo:snippet sdk=feedback lang=js field=install -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```ts
 npm install github:onelo-tools/onelo-js
 ```
@@ -15,7 +15,7 @@ npm install github:onelo-tools/onelo-js
 
 ## init
 <!-- onelo:snippet sdk=feedback lang=js field=init -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```ts
 import { Onelo } from '@onelo/js'
 
@@ -28,7 +28,7 @@ const onelo = new Onelo({
 
 ## usage
 <!-- onelo:snippet sdk=feedback lang=js field=usage -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```ts
 // Anonymous — best for public-facing apps; the report isn't tied to a person
 await onelo.feedback.open()

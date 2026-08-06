@@ -7,7 +7,7 @@ platform's snippet.
 
 ## install
 <!-- onelo:snippet sdk=feedback lang=flutter field=install -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```dart
 # pubspec.yaml:
 dependencies:
@@ -20,7 +20,7 @@ dependencies:
 
 ## init
 <!-- onelo:snippet sdk=feedback lang=flutter field=init -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```dart
 import 'package:onelo/onelo.dart';
 
@@ -34,7 +34,7 @@ final onelo = Onelo(
 
 ## usage
 <!-- onelo:snippet sdk=feedback lang=flutter field=usage -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```dart
 // Anonymous — best for public-facing apps; the report isn't tied to a person
 onelo.feedback.open(context);

@@ -9,7 +9,7 @@ snippet.
 
 ## install
 <!-- onelo:snippet sdk=auth lang=macos field=install -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```swift
 // Xcode → File → Add Package Dependencies:
 // https://github.com/onelo-tools/onelo-swift
@@ -18,7 +18,7 @@ snippet.
 
 ## init
 <!-- onelo:snippet sdk=auth lang=macos field=init -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```swift
 import OneloSwift
 
@@ -50,7 +50,7 @@ import OneloSwift
 
 ## usage
 <!-- onelo:snippet sdk=auth lang=macos field=usage -->
-<!-- baked from @onelo/snippets@0.19.10 — do not edit by hand -->
+<!-- baked from @onelo/snippets@0.21.0 — do not edit by hand -->
 ```swift
 // 4. OneloAuthView always opens the centrally-hosted sign-in page —
 //    on both Free and Paid plans. Email / password stays inside the

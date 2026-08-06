@@ -93,6 +93,28 @@ grep -rn --include="*.kt" \
 > projects expose it via a singleton or DI graph; see Phase 6 of SKILL.md
 > for the init pattern.
 
+### Avoid the first-paint flicker
+
+`identify(userId)` (or Onelo Auth's own session resolve) settles per-user
+targeting over the **network**. A `feature(...)` read before that resolves can
+briefly return the wrong status — most visible right after login or a cold
+app launch, before the SDK has restored *this* user's cached snapshot. If the
+call site treats "not yet known" the same as `HIDDEN` (the common mistake:
+`if (!feat.isVisible()) return`/`Unit` with no separate loading branch), a
+real feature flashes then disappears then reappears — this reads as a bug in
+Onelo's cache, but the cache is fine; the call site just asked before the
+answer existed.
+
+Suspend on `ready()` before the first read, in `Application.onCreate()` or
+before your first Composable/Activity/Fragment renders:
+
+```kotlin
+lifecycleScope.launch { onelo.features.ready(timeoutMs = 1500) }
+```
+
+If you can't block first paint, track a separate loading flag and render a
+skeleton — never fold "unknown yet" into the same branch as "hidden".
+
 ### Choosing the right check
 
 Default to **`isEnabled()`** for "show this content or don't" gates. It
